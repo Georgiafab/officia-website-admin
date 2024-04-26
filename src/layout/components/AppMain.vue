@@ -8,13 +8,17 @@
 
 <script>
 export default {
-  name: 'AppMain',
+  name: "AppMain",
   computed: {
     key() {
-      return this.$route.path
-    }
-  }
-}
+      const ignor = ["NewsEdit", "ProductEdit"];
+      if (ignor.includes(this.$route.name)) {
+        return this.$route.path + this.$route.query.id;
+      }
+      return this.$route.fullPath;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -25,7 +29,7 @@ export default {
   position: relative;
   overflow: hidden;
 }
-.fixed-header+.app-main {
+.fixed-header + .app-main {
   padding-top: 50px;
 }
 </style>
