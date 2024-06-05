@@ -25,7 +25,7 @@ export function getnewDetail(params) {
 
 export function addNew(data) {
   return request({
-    url: "/sys/api/add_new",
+    url: "/sys/api/add_news",
     method: "post",
     data,
   });
@@ -102,17 +102,17 @@ export function editCompany(data) {
   });
 }
 
-export function getBannerDetail(params) {
+export function getIndexDetail(params) {
   return request({
-    url: "/sys/api/get_banner_list",
+    url: "/sys/api/get_index",
     method: "get",
     params,
   });
 }
 
-export function editBanner(data) {
+export function editIndex(data) {
   return request({
-    url: "/sys/api/edit_banner",
+    url: "/sys/api/edit_index",
     method: "post",
     data,
   });

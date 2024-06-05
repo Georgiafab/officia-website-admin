@@ -1,29 +1,7 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="品牌" prop="brand_id" :rules="rules">
-        <el-select
-          filterable
-          @change="brandChange"
-          v-model="form.brand_id"
-          placeholder="请选择"
-        >
-          <el-option
-            v-for="item in options"
-            :key="item._id"
-            :label="item.brand_name"
-            :value="item._id"
-          >
-          </el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item
-        v-if="form.brand_id"
-        label="类别名称"
-        prop="classfiy_id"
-        :rules="rules"
-      >
+    <el-form ref="form" :model="form" label-width="140px">
+      <el-form-item label="类别名称" prop="classfiy_id" :rules="rules">
         <el-select v-model="form.classfiy_id" placeholder="请选择">
           <el-option
             v-for="item in classfiyOptions"
@@ -34,29 +12,33 @@
           </el-option>
         </el-select>
       </el-form-item>
-
-      <el-form-item label="产品名称" prop="product_name" :rules="rules">
-        <el-input v-model="form.product_name" />
-      </el-form-item>
-
-      <!-- <el-form-item label="产品名称" prop="product_name" :rules="rules">
-        <el-input v-model="form.product_name" />
-      </el-form-item> -->
-
-      <el-form-item label="产品图片" prop="product_image" :rules="rules">
+      <el-form-item label="案例封面" prop="case_image" :rules="rules">
         <div style="display: flex">
           <el-input
-            v-model="form.product_image"
+            v-model="form.case_image"
             style="margin-right: 30px"
           ></el-input
-          ><Selectstatic dirpath="products">历史图片和文件</Selectstatic>
+          ><Selectstatic dirpath="case">历史图片和文件</Selectstatic>
         </div>
-        <!-- <el-upload
-          action="#"
-          class="avatar-uploader"
-          :http-request="uploadProductImg"
-          :show-file-list="false"
-        > -->
+      </el-form-item>
+      <el-form-item label="案例名称" prop="case_name" :rules="rules">
+        <el-input v-model="form.case_name" />
+      </el-form-item>
+      <el-form-item label="案例副标题" prop="case_subname" :rules="rules">
+        <el-input v-model="form.case_subname" />
+      </el-form-item>
+      <el-form-item label="案例描述" prop="case_desc" :rules="rules">
+        <el-input v-model="form.case_desc" />
+      </el-form-item>
+
+      <el-form-item label="案例详情banner" prop="case_banner" :rules="rules">
+        <div style="display: flex">
+          <el-input
+            v-model="form.case_banner"
+            style="margin-right: 30px"
+          ></el-input
+          ><Selectstatic dirpath="case">历史图片和文件</Selectstatic>
+        </div>
         <el-image
           v-if="form.product_image"
           :src="form.product_image"
@@ -64,11 +46,32 @@
           :preview-src-list="[form.product_image]"
           fit="cover"
         />
-        <!-- <i v-else class="el-icon-plus avatar-uploader-icon"></i> -->
-        <!-- </el-upload> -->
       </el-form-item>
 
-      <div class="product-list">
+      <el-form-item label="案例url" prop="case_uri" :rules="rules">
+        <el-input v-model="form.case_uri" />
+      </el-form-item>
+
+      <el-form-item label="内容" prop="content" :rules="rules">
+        <div style="border: 1px solid #ccc">
+          <Toolbar
+            class="toolbar"
+            style="border-bottom: 1px solid #ccc"
+            :editor="editor"
+            :defaultConfig="toolbarConfig"
+            :mode="mode"
+          />
+          <Editor
+            style="height: 500px; overflow-y: hidden"
+            v-model="form.content"
+            :defaultConfig="editorConfig"
+            :mode="mode"
+            @onCreated="onCreated"
+          />
+        </div>
+      </el-form-item>
+
+      <!-- <div class="product-list">
         <el-form-item
           v-for="(pdf, index) in form.detail_pdf"
           :label="'产品pdf' + (index + 1)"
@@ -98,24 +101,10 @@
               circle
             ></el-button>
           </div>
-          <!-- <el-input v-for="item in form.detail_pdf" :value="item" :key="item"></el-input> -->
         </el-form-item>
 
         <Selectstatic dirpath="products">历史图片和文件</Selectstatic>
-        <!-- <el-form-item>
-          <el-upload
-            action="#"
-            :http-request="uploadProductPdf"
-            :before-remove="beforeRemove"
-            :on-remove="handleRemove"
-            multiple
-            :show-file-list="false"
-            style="margin-top: 10px"
-          >
-            <el-button size="small" type="primary">点击上传</el-button>
-          </el-upload>
-        </el-form-item> -->
-      </div>
+      </div> -->
 
       <el-form-item>
         <el-button type="primary" @click="onSubmit" :loading="loading"
@@ -128,17 +117,14 @@
 </template>
 
 <script>
-import {
-  getBrandList,
-  addProduct,
-  getProductDetail,
-  getClassfiyList,
-} from "@/api/product";
+import { addProduct, getProductDetail, getClassfiyList } from "@/api/product";
 import { upload } from "@/api/user";
 import Selectstatic from "@/components/Selectstatic";
+import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+import "@wangeditor/editor/dist/css/style.css";
 
 export default {
-  components: { Selectstatic },
+  components: { Selectstatic, Editor, Toolbar },
   data() {
     return {
       form: {
@@ -152,10 +138,31 @@ export default {
       options: [],
       classfiyOptions: [],
       loading: false,
+      editor: null,
+      html: "<p>hello</p>",
+      toolbarConfig: {},
+      editorConfig: {
+        placeholder: "请输入内容...",
+        MENU_CONF: {
+          uploadImage: {
+            customUpload: this.uploadImg,
+            customInsert(res, insertFn) {
+              console.log(res, "resresres");
+            },
+          },
+          uploadVideo: {
+            customUpload: this.uploadImg,
+          },
+        },
+      },
+      mode: "default", // or 'simple'
       rules: { required: true, message: "该字段必填", trigger: "blur" },
     };
   },
   methods: {
+    onCreated(editor) {
+      this.editor = Object.seal(editor); // 一定要用 Object.seal() ，否则会报错
+    },
     onSubmit() {
       this.$refs.form.validate((valid) => {
         this.loading = true;
@@ -212,13 +219,11 @@ export default {
       this.$router.replace("/product");
     },
     brandChange() {
-      getClassfiyList({ brand_id: this.form.brand_id, size: 1000 }).then(
-        (res) => {
-          if (res.code === 200) {
-            this.classfiyOptions = res.data.list;
-          }
+      getClassfiyList({ size: 1000 }).then((res) => {
+        if (res.code === 200) {
+          this.classfiyOptions = res.data.list;
         }
-      );
+      });
     },
     addPdf() {
       this.form.detail_pdf.push({
@@ -235,18 +240,12 @@ export default {
   },
 
   mounted() {
+    this.brandChange();
     const id = this.$route.query.id;
     id &&
       getProductDetail({ id }).then((res) => {
         this.form = res.data;
-        this.brandChange();
       });
-
-    getBrandList().then((res) => {
-      if (res.code === 200) {
-        this.options = res.data.list;
-      }
-    });
   },
 };
 </script>

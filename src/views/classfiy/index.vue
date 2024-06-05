@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
-    <el-button @click="$router.push('/classfiy/edit')" type="success"
+    <el-button type="success" @click="$router.push('/classfiy/edit')"
       >新增</el-button
     >
-    <el-divider></el-divider>
+    <el-divider />
     <SearchHeader :config="config" @onSubmit="onSearch" />
-    <el-divider></el-divider>
+    <el-divider />
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -24,25 +24,18 @@
         width="100"
         align="center"
         prop="enTitle"
-      >
-      </el-table-column>
-      <el-table-column label="品牌名" align="center" prop="brand_id">
-        <template slot-scope="scope">
-          {{ scope.row.brand_id ? scope.row.brand_id.brand_name : "--" }}
-        </template>
-      </el-table-column>
+      />
 
-      <el-table-column label="产品类别" align="center" prop="classfiy_name">
-      </el-table-column>
+      <el-table-column label="案例类别" align="center" prop="classfiy_name" />
 
       <el-table-column label="操作" width="180" align="center">
         <template slot-scope="scope">
           <el-button
-            @click="$router.push(`/classfiy/edit?id=${scope.row._id}`)"
             size="small"
+            @click="$router.push(`/classfiy/edit?id=${scope.row._id}`)"
             >编辑</el-button
           >
-          <el-button type="danger" @click="delItem(scope.row._id)" size="small"
+          <el-button type="danger" size="small" @click="delItem(scope.row._id)"
             >删除</el-button
           >
         </template>
@@ -54,13 +47,12 @@
       :total="queryParams.total"
       :current-page.sync="queryParams.page"
       @current-change="pageChange"
-    >
-    </el-pagination>
+    />
   </div>
 </template>
 
 <script>
-import { getClassfiyList, delClassfiy, getBrandList } from "@/api/product";
+import { getClassfiyList, delClassfiy } from "@/api/product";
 
 export default {
   filters: {
@@ -80,27 +72,18 @@ export default {
       dialogVisible: false,
       queryParams: {},
       config: [
-        { type: "select", label: "品牌", key: "brand_id", options: {} },
+        // { type: "select", label: "品牌", key: "brand_id", options: {} },
         { type: "input", label: "类别名称", key: "classfiy_name" },
       ],
     };
   },
   created() {
     this.fetchData();
-    getBrandList().then((res) => {
-      const list = {};
-      res.data.list.forEach((el) => {
-        list[el._id] = el.brand_name;
-      });
-      this.$set(this.config[0], "options", list);
-    });
   },
   methods: {
     fetchData(queryParams = {}) {
       this.listLoading = true;
-      console.log(queryParams.brand_id);
       getClassfiyList({ ...this.queryParams, ...queryParams }).then((res) => {
-        console.log(queryParams.brand_id, "111");
         this.list = res.data.list;
         this.listLoading = false;
         this.queryParams = {

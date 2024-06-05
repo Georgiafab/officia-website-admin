@@ -1,19 +1,6 @@
 <template>
   <div class="app-container">
     <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="品牌名称" prop="brand_id" :rules="rules">
-        <!-- <el-input v-model="form.brand_name" /> -->
-        <el-select v-model="form.brand_id" placeholder="请选择">
-          <el-option
-            v-for="item in options"
-            :key="item._id"
-            :label="item.brand_name"
-            :value="item._id"
-          >
-          </el-option>
-        </el-select>
-      </el-form-item>
-
       <el-form-item label="类别名称" prop="classfiy_name" :rules="rules">
         <el-input v-model="form.classfiy_name" />
       </el-form-item>
@@ -23,7 +10,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" :loading="loading"
+        <el-button type="primary" :loading="loading" @click="onSubmit"
           >提交</el-button
         >
         <el-button @click="onCancel">返回</el-button>
@@ -33,12 +20,11 @@
 </template>
 
 <script>
-import { getBrandList, addClassfiy, getClassfiyDetail } from "@/api/product";
+import { addClassfiy, getClassfiyDetail } from "@/api/product";
 export default {
   data() {
     return {
       form: {
-        brand_id: "",
         classfiy_name: "",
         // sort_num: 0,
       },
@@ -46,6 +32,14 @@ export default {
       loading: false,
       rules: { required: true, message: "该字段必填", trigger: "blur" },
     };
+  },
+  mounted() {
+    const id = this.$route.query.id;
+    id &&
+      getClassfiyDetail({ id }).then((res) => {
+        console.log(res, "res");
+        this.form = res.data;
+      });
   },
   methods: {
     onSubmit() {
@@ -77,20 +71,6 @@ export default {
     onCancel() {
       this.$router.replace("/classfiy");
     },
-  },
-  mounted() {
-    const id = this.$route.query.id;
-    id &&
-      getClassfiyDetail({ id }).then((res) => {
-        console.log(res, "res");
-        this.form = res.data;
-      });
-
-    getBrandList().then((res) => {
-      if (res.code === 200) {
-        this.options = res.data.list;
-      }
-    });
   },
 };
 </script>
