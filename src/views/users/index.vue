@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="success" @click="$router.push('/classfiy/edit')"
+    <el-button type="success" @click="$router.push('/users/edit')"
       >新增</el-button
     >
     <el-divider />
@@ -14,30 +14,27 @@
       fit
       highlight-current-row
     >
-      <!-- <el-table-column align="center" label="类别ID" prop="_id">
-      </el-table-column> -->
+      <el-table-column label="用户名" prop="username" align="center" />
+      <el-table-column align="center" label="电话" prop="phone" />
 
-      <!-- <el-table-column align="center" label="排序" width="270" prop="sort_num">
-      </el-table-column> -->
-      <el-table-column
-        label="url 标题"
-        width="100"
-        align="center"
-        prop="enTitle"
-      />
-      <el-table-column label="分类" align="center" prop="brand_id">
+      <el-table-column label="邮箱" align="center" prop="email" />
+
+      <el-table-column label="qrcodeImg" width="130" align="center">
         <template slot-scope="scope">
-          {{ scope.row.brand_id ? scope.row.brand_id.brand_name : "--" }}
+          <el-image
+            :src="scope.row.qrcodeImg"
+            fit="cover"
+            :preview-src-list="[scope.row.qrcodeImg]"
+            alt=""
+            width="60px"
+          />
         </template>
       </el-table-column>
-
-      <el-table-column label="产品类别" align="center" prop="classfiy_name" />
-
       <el-table-column label="操作" width="180" align="center">
         <template slot-scope="scope">
           <el-button
             size="small"
-            @click="$router.push(`/classfiy/edit?id=${scope.row._id}`)"
+            @click="$router.push(`/users/edit?id=${scope.row._id}`)"
             >编辑</el-button
           >
           <el-button type="danger" size="small" @click="delItem(scope.row._id)"
@@ -46,6 +43,7 @@
         </template>
       </el-table-column>
     </el-table>
+
     <el-pagination
       style="text-align: right; margin-top: 20px"
       layout="prev, pager, next"
@@ -57,7 +55,7 @@
 </template>
 
 <script>
-import { getClassfiyList, delClassfiy, getBrandList } from "@/api/product";
+import { getUserslist, delUser } from "@/api/user";
 
 export default {
   filters: {
@@ -74,37 +72,24 @@ export default {
     return {
       list: null,
       listLoading: true,
-      dialogVisible: false,
       queryParams: {},
-      config: [
-        { type: "select", label: "分类", key: "brand_id", options: {} },
-        { type: "input", label: "类别名称", key: "classfiy_name" },
-      ],
+      config: [{ type: "input", label: "搜索用户名", key: "keyward" }],
     };
   },
   created() {
     this.fetchData();
-    getBrandList().then((res) => {
-      const list = {};
-      res.data.list.forEach((el) => {
-        list[el._id] = el.brand_name;
-      });
-      this.$set(this.config[0], "options", list);
-    });
   },
   methods: {
     fetchData(queryParams = {}) {
       this.listLoading = true;
-      console.log(queryParams.brand_id);
-      getClassfiyList({ ...this.queryParams, ...queryParams }).then((res) => {
-        console.log(queryParams.brand_id, "111");
+      getUserslist({ ...this.queryParams, ...queryParams }).then((res) => {
         this.list = res.data.list;
-        this.listLoading = false;
         this.queryParams = {
           page: res.data.page,
           total: res.data.total,
           ...queryParams,
         };
+        this.listLoading = false;
       });
     },
     delItem(id) {
@@ -113,7 +98,7 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
       }).then(() => {
-        delClassfiy({ id }).then((res) => {
+        delUser({ id }).then((res) => {
           if (res.code === 200) {
             this.$message({ type: "success", message: res.message });
             this.fetchData();
@@ -121,7 +106,6 @@ export default {
         });
       });
     },
-    submitAdd() {},
     onSearch(form) {
       this.fetchData(form);
     },

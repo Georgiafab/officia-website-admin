@@ -1,26 +1,16 @@
 <template>
   <div class="app-container">
     <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="类别分类名称" prop="brand_id" :rules="rules">
-        <!-- <el-input v-model="form.brand_name" /> -->
-        <el-select v-model="form.brand_id" placeholder="请选择">
-          <el-option
-            v-for="item in options"
-            :key="item._id"
-            :label="item.brand_name"
-            :value="item._id"
-          >
-          </el-option>
-        </el-select>
+      <el-form-item label="分类名称" prop="brand_name" :rules="rules">
+        <el-input v-model="form.brand_name" />
       </el-form-item>
-
-      <el-form-item label="类别名称" prop="classfiy_name" :rules="rules">
-        <el-input v-model="form.classfiy_name" />
-      </el-form-item>
-
       <el-form-item label="url 标题" prop="enTitle" :rules="rules">
         <el-input v-model="form.enTitle" />
       </el-form-item>
+
+      <!-- <el-form-item label="排序" prop="sort_num" :rules="rules">
+        <el-input-number v-model="form.sort_num" />
+      </el-form-item> -->
 
       <el-form-item>
         <el-button type="primary" @click="onSubmit" :loading="loading"
@@ -33,16 +23,14 @@
 </template>
 
 <script>
-import { getBrandList, addClassfiy, getClassfiyDetail } from "@/api/product";
+import { addBrand, getBrandDetail } from "@/api/product";
 export default {
   data() {
     return {
       form: {
-        brand_id: "",
-        classfiy_name: "",
-        // sort_num: 0,
+        brand_name: "",
+        sort_num: 0,
       },
-      options: [],
       loading: false,
       rules: { required: true, message: "该字段必填", trigger: "blur" },
     };
@@ -52,9 +40,9 @@ export default {
       this.$refs.form.validate((valid) => {
         this.loading = true;
         if (valid) {
-          addClassfiy({
+          addBrand({
             ...this.form,
-            enTitle: this.form.enTitle.toLowerCase().replace(/\s*/g, ""),
+            // enTitle: this.form.enTitle.toLowerCase().replace(/\s*/g, ""),
           })
             .then((res) => {
               if (res.code === 200) {
@@ -62,8 +50,8 @@ export default {
                 // this.$router.replace('/news')
                 if (!this.$route.query.id) {
                   this.form = {
-                    brand_id: "",
-                    classfiy_name: "",
+                    brand_name: "",
+                    sort_num: 0,
                   };
                 }
               }
@@ -75,22 +63,20 @@ export default {
       });
     },
     onCancel() {
-      this.$router.replace("/classfiy");
+      this.$router.replace("/brand");
     },
   },
   mounted() {
     const id = this.$route.query.id;
     id &&
-      getClassfiyDetail({ id }).then((res) => {
+      getBrandDetail({ id }).then((res) => {
         console.log(res, "res");
         this.form = res.data;
       });
 
-    getBrandList().then((res) => {
-      if (res.code === 200) {
-        this.options = res.data.list;
-      }
-    });
+    // setTimeout(() => {
+    //   this.html = "<p>模拟 Ajax 异步设置内容 HTML</p>";
+    // }, 1500);
   },
 };
 </script>

@@ -13,7 +13,7 @@
 
       <el-form-item label="新闻封面" prop="cover" :rules="rules">
         <div style="display: flex">
-          <el-input v-model="form.cover" style="margin-right: 30px"></el-input>
+          <el-input v-model="form.cover" style="margin-right: 30px" />
           <Selectstatic dirpath="news">历史图片和文件</Selectstatic>
         </div>
         <el-upload
@@ -30,7 +30,7 @@
             fit="cover"
             :preview-src-list="[form.cover]"
           />
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+          <i v-else class="el-icon-plus avatar-uploader-icon" />
         </el-upload>
       </el-form-item>
 
@@ -52,20 +52,20 @@
             class="toolbar"
             style="border-bottom: 1px solid #ccc"
             :editor="editor"
-            :defaultConfig="toolbarConfig"
+            :default-config="toolbarConfig"
             :mode="mode"
           />
           <Editor
-            style="height: 500px; overflow-y: hidden"
             v-model="form.content"
-            :defaultConfig="editorConfig"
+            style="height: 500px; overflow-y: hidden"
+            :default-config="editorConfig"
             :mode="mode"
             @onCreated="onCreated"
           />
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" :loading="loading"
+        <el-button type="primary" :loading="loading" @click="onSubmit"
           >提交</el-button
         >
         <el-button @click="onCancel">返回</el-button>
@@ -75,7 +75,6 @@
 </template>
 
 <script>
-import { getToken } from "@/utils/auth";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import "@wangeditor/editor/dist/css/style.css";
 import { upload, addNew, getnewDetail } from "@/api/user";
@@ -115,6 +114,23 @@ export default {
       mode: "default", // or 'simple'
       rules: { required: true, message: "该字段必填", trigger: "blur" },
     };
+  },
+  mounted() {
+    const id = this.$route.query.id;
+    id &&
+      getnewDetail({ id }).then((res) => {
+        console.log(res, "res");
+        this.form = res.data;
+      });
+
+    // setTimeout(() => {
+    //   this.html = "<p>模拟 Ajax 异步设置内容 HTML</p>";
+    // }, 1500);
+  },
+  beforeDestroy() {
+    const editor = this.editor;
+    if (editor == null) return;
+    editor.destroy(); // 组件销毁时，及时销毁编辑器
   },
   methods: {
     onCreated(editor) {
@@ -160,7 +176,7 @@ export default {
       });
     },
     uploadImg(file, insertFn) {
-      let imgData = new FormData();
+      const imgData = new FormData();
       imgData.append("img", file);
       imgData.append("dirpath", "news");
       console.log(imgData, "file");
@@ -171,12 +187,12 @@ export default {
       });
     },
 
-    //重点来了： 自定义粘贴。可阻止编辑器的默认粘贴，实现自己的粘贴逻辑。(可以实现复制粘贴 word ，有图片)
+    // 重点来了： 自定义粘贴。可阻止编辑器的默认粘贴，实现自己的粘贴逻辑。(可以实现复制粘贴 word ，有图片)
     customPaste(editor, event, callback) {
       console.log("ClipboardEvent 粘贴事件对象", event);
       let html = event.clipboardData.getData("text/html"); // 获取粘贴的 html
       // let text = event.clipboardData.getData('text/plain') // 获取粘贴的纯文本
-      let rtf = event.clipboardData.getData("text/rtf"); // 获取 rtf 数据（如从 word wsp 复制粘贴）
+      const rtf = event.clipboardData.getData("text/rtf"); // 获取 rtf 数据（如从 word wsp 复制粘贴）
       var that = this;
       console.log(html, "imgSrcs");
       if (html) {
@@ -219,17 +235,17 @@ export default {
      * @return Array
      */
     findAllImgSrcsFromHtml(htmlData) {
-      let imgReg = /<img.*?(?:>|\/>)/gi; //匹配图片中的img标签
-      let srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i; // 匹配图片中的src
+      const imgReg = /<img.*?(?:>|\/>)/gi; // 匹配图片中的img标签
+      const srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i; // 匹配图片中的src
 
-      let arr = htmlData.match(imgReg); //筛选出所有的img
+      const arr = htmlData.match(imgReg); // 筛选出所有的img
       if (!arr || (Array.isArray(arr) && !arr.length)) {
         return false;
       }
 
-      let srcArr = [];
+      const srcArr = [];
       for (let i = 0; i < arr.length; i++) {
-        let src = arr[i].match(srcReg);
+        const src = arr[i].match(srcReg);
         // 获取图片地址
         srcArr.push(src[1]);
       }
@@ -318,23 +334,6 @@ export default {
           .join("")
       );
     },
-  },
-  mounted() {
-    const id = this.$route.query.id;
-    id &&
-      getnewDetail({ id }).then((res) => {
-        console.log(res, "res");
-        this.form = res.data;
-      });
-
-    // setTimeout(() => {
-    //   this.html = "<p>模拟 Ajax 异步设置内容 HTML</p>";
-    // }, 1500);
-  },
-  beforeDestroy() {
-    const editor = this.editor;
-    if (editor == null) return;
-    editor.destroy(); // 组件销毁时，及时销毁编辑器
   },
 };
 </script>

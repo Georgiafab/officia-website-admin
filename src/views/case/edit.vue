@@ -1,24 +1,33 @@
 <template>
   <div class="app-container">
     <el-form ref="form" :model="form" label-width="140px">
-      <el-form-item label="类别名称" prop="classfiy_id" :rules="rules">
-        <el-select v-model="form.classfiy_id" placeholder="请选择">
-          <el-option
-            v-for="item in classfiyOptions"
-            :key="item._id"
-            :label="item.classfiy_name"
-            :value="item._id"
+      <div class="classify-grop">
+        <el-form-item
+          v-for="(bra, index) in options"
+          :key="bra._id"
+          :label="bra.brand_name"
+          :prop="'classfiy_id' + (index + 1)"
+          :rules="rules"
+        >
+          <el-select
+            v-model="form['classfiy_id' + (index + 1)]"
+            placeholder="请选择"
           >
-          </el-option>
-        </el-select>
-      </el-form-item>
+            <el-option
+              v-for="item in classfiyOptions[bra._id]"
+              :key="item._id"
+              :label="item.classfiy_name"
+              :value="item._id"
+            />
+          </el-select>
+        </el-form-item>
+      </div>
       <el-form-item label="案例封面" prop="case_image" :rules="rules">
         <div style="display: flex">
           <el-input
             v-model="form.case_image"
             style="margin-right: 30px"
-          ></el-input
-          ><Selectstatic dirpath="case">历史图片和文件</Selectstatic>
+          /><Selectstatic dirpath="case">历史图片和文件</Selectstatic>
         </div>
       </el-form-item>
       <el-form-item label="案例名称" prop="case_name" :rules="rules">
@@ -31,7 +40,7 @@
         <el-input v-model="form.case_desc" />
       </el-form-item>
 
-      <el-form-item label="案例详情banner" prop="case_banner" :rules="rules">
+      <!-- <el-form-item label="案例详情banner" prop="case_banner" :rules="rules">
         <div style="display: flex">
           <el-input
             v-model="form.case_banner"
@@ -46,10 +55,13 @@
           :preview-src-list="[form.product_image]"
           fit="cover"
         />
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item label="案例url" prop="case_uri" :rules="rules">
         <el-input v-model="form.case_uri" />
+      </el-form-item>
+      <el-form-item label="在首页展示" prop="isHome">
+        <el-switch v-model="form.isHome" />
       </el-form-item>
 
       <el-form-item label="内容" prop="content" :rules="rules">
@@ -58,13 +70,13 @@
             class="toolbar"
             style="border-bottom: 1px solid #ccc"
             :editor="editor"
-            :defaultConfig="toolbarConfig"
+            :default-config="toolbarConfig"
             :mode="mode"
           />
           <Editor
-            style="height: 500px; overflow-y: hidden"
             v-model="form.content"
-            :defaultConfig="editorConfig"
+            style="height: 500px; overflow-y: hidden"
+            :default-config="editorConfig"
             :mode="mode"
             @onCreated="onCreated"
           />
@@ -107,7 +119,7 @@
       </div> -->
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" :loading="loading"
+        <el-button type="primary" :loading="loading" @click="onSubmit"
           >提交</el-button
         >
         <el-button @click="onCancel">返回</el-button>
@@ -117,7 +129,12 @@
 </template>
 
 <script>
-import { addProduct, getProductDetail, getClassfiyList } from "@/api/product";
+import {
+  addProduct,
+  getProductDetail,
+  getClassfiyList,
+  getBrandList,
+} from "@/api/product";
 import { upload } from "@/api/user";
 import Selectstatic from "@/components/Selectstatic";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
@@ -136,7 +153,7 @@ export default {
         // sort_num: 0,
       },
       options: [],
-      classfiyOptions: [],
+      classfiyOptions: {},
       loading: false,
       editor: null,
       html: "<p>hello</p>",
@@ -158,6 +175,22 @@ export default {
       mode: "default", // or 'simple'
       rules: { required: true, message: "该字段必填", trigger: "blur" },
     };
+  },
+
+  mounted() {
+    const id = this.$route.query.id;
+    this.brandChange();
+    id &&
+      getProductDetail({ id }).then((res) => {
+        this.form = res.data;
+      });
+
+    getBrandList().then((res) => {
+      if (res.code === 200) {
+        this.options = res.data.list;
+        console.log(this.options);
+      }
+    });
   },
   methods: {
     onCreated(editor) {
@@ -196,7 +229,7 @@ export default {
       this.form.detail_pdf = fileList;
     },
     uploadImg(file, insertFn) {
-      let imgData = new FormData();
+      const imgData = new FormData();
       imgData.append("img", file);
       // console.log(file, imgData)
       upload(imgData).then((res) => {
@@ -216,12 +249,19 @@ export default {
       });
     },
     onCancel() {
-      this.$router.replace("/product");
+      this.$router.replace("/case");
     },
     brandChange() {
       getClassfiyList({ size: 1000 }).then((res) => {
         if (res.code === 200) {
-          this.classfiyOptions = res.data.list;
+          const obj = {};
+
+          res.data.list.forEach((el) => {
+            obj[el.brand_id._id]
+              ? obj[el.brand_id._id].push(el)
+              : (obj[el.brand_id._id] = [el]);
+          });
+          this.classfiyOptions = obj;
         }
       });
     },
@@ -238,21 +278,15 @@ export default {
       }
     },
   },
-
-  mounted() {
-    this.brandChange();
-    const id = this.$route.query.id;
-    id &&
-      getProductDetail({ id }).then((res) => {
-        this.form = res.data;
-      });
-  },
 };
 </script>
 
 <style scoped>
 .line {
   text-align: center;
+}
+.classify-grop {
+  display: flex;
 }
 
 .avatar-uploader /deep/ .el-upload {

@@ -16,15 +16,18 @@
     >
       <el-table-column label="案例类别" align="center" prop="classfiy_id">
         <template slot-scope="scope">
-          {{ scope.row.classfiy_id && scope.row.classfiy_id.classfiy_name }}
+          {{
+            scope.row.classfiy_id1 && scope.row.classfiy_id1.classfiy_name + ","
+          }}
+          {{ scope.row.classfiy_id2 && scope.row.classfiy_id2.classfiy_name }}
         </template>
       </el-table-column>
 
-      <el-table-column label="案例名称" align="center" prop="product_name" />
+      <el-table-column label="案例名称" align="center" prop="case_name" />
       <el-table-column label="案例副标题" align="center" prop="case_subname" />
-      <el-table-column label="案例封面图" align="center" prop="product_image">
+      <el-table-column label="案例封面图" align="center" prop="case_image">
         <template slot-scope="scope">
-          <img :src="scope.row.product_image" alt="" width="90px" />
+          <img :src="scope.row.case_image" alt="" width="90px" />
         </template>
       </el-table-column>
 
@@ -32,7 +35,7 @@
         <template slot-scope="scope">
           <el-button
             size="small"
-            @click="$router.push(`/product/edit?id=${scope.row._id}`)"
+            @click="$router.push(`/case/edit?id=${scope.row._id}&dirpath=case`)"
             >编辑</el-button
           >
           <el-button type="danger" size="small" @click="delItem(scope.row._id)"
@@ -53,7 +56,12 @@
 </template>
 
 <script>
-import { getProductList, delProduct, getClassfiyList } from "@/api/product";
+import {
+  getProductList,
+  delProduct,
+  getClassfiyList,
+  getBrandList,
+} from "@/api/product";
 
 export default {
   data() {
@@ -64,6 +72,12 @@ export default {
       queryParams: {},
       brand_list: [],
       config: [
+        {
+          type: "select",
+          label: "分类",
+          key: "brand_id",
+          options: {},
+        },
         { type: "select", label: "类别", key: "classfiy_id", options: {} },
         { type: "input", label: "案例名称", key: "case_name" },
       ],
@@ -80,14 +94,23 @@ export default {
   },
   created() {
     this.fetchData();
-    getClassfiyList({ size: 1000 }).then((res) => {
+    getBrandList().then((res) => {
       const list = {};
-      this.brand_list = res.data.list;
       res.data.list.forEach((el) => {
-        list[el._id] = el.classfiy_name;
+        list[el._id] = el.brand_name;
       });
       this.$set(this.config[0], "options", list);
     });
+    getClassfiyList({ brand_id: this.queryParams.brand_id, size: 1000 }).then(
+      (res) => {
+        const list = {};
+        this.brand_list = res.data.list;
+        res.data.list.forEach((el) => {
+          list[el._id] = el.classfiy_name;
+        });
+        this.$set(this.config[1], "options", list);
+      }
+    );
   },
   methods: {
     fetchData(queryParams = {}) {
@@ -101,6 +124,18 @@ export default {
         };
         this.listLoading = false;
       });
+    },
+    brandChange(val) {
+      const showl = {};
+      const list = this.brand_list.filter((item) => {
+        console.log(item);
+        return item.brand_id._id === val;
+      });
+      list.forEach((el) => {
+        showl[el._id] = el.classfiy_name;
+      });
+      this.$refs.searchRef.form.classfiy_id = null;
+      this.$set(this.config[1], "options", showl);
     },
     delItem(id) {
       this.$confirm("确定要删除当前的数据吗", "确认信息", {

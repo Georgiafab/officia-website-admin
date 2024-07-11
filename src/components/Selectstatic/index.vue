@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-form-item label="">
-      <el-button @click="staticLook" type="success"> <slot></slot> </el-button>
+      <el-button type="success" @click="staticLook"> <slot /> </el-button>
     </el-form-item>
 
     <el-dialog
@@ -27,16 +27,22 @@ export default {
   props: {
     dirpath: String,
   },
-  watch: {
-    $route(to, from) {
-      this.staticKey++;
-    },
-  },
   data() {
     return {
       staticKey: 1,
       dialogVisible: false,
     };
+  },
+  watch: {
+    $route(to, from) {
+      this.staticKey++;
+    },
+  },
+  mounted() {
+    // this.$router.push({
+    //   path: this.$route.path,
+    //   query: { ...this.$route.query, dirpath: this.dirpath },
+    // });
   },
   methods: {
     staticLook() {

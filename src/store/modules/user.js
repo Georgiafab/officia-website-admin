@@ -1,49 +1,68 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import { login, logout, getInfo } from "@/api/user";
+import { getToken, setToken, removeToken } from "@/utils/auth";
+import { resetRouter } from "@/router";
 
 const getDefaultState = () => {
+  let userData = {};
+  try {
+    userData = JSON.parse(localStorage.getItem("userdata"));
+  } catch (error) {
+    console.log(error);
+  }
   return {
     token: getToken(),
-    name: '',
-    avatar: ''
-  }
-}
+    name: userData?.name,
+    avatar: "",
+    isAdmin: userData?.isAdmin,
+  };
+};
 
-const state = getDefaultState()
+const state = getDefaultState();
 
 const mutations = {
   RESET_STATE: (state) => {
-    Object.assign(state, getDefaultState())
+    Object.assign(state, getDefaultState());
   },
   SET_TOKEN: (state, token) => {
-    state.token = token
+    state.token = token;
   },
   SET_NAME: (state, name) => {
-    state.name = name
+    state.name = name;
   },
   SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
-  }
-}
+    state.avatar = avatar;
+  },
+  SET_ISADMIN: (state, isAdmin) => {
+    state.isAdmin = isAdmin;
+  },
+};
 
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { username, password } = userInfo;
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        console.log(data)
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      }).finally(() => {
-        console.log('daoe')
-      })
-    })
+      login({ username: username.trim(), password: password })
+        .then((response) => {
+          const { data } = response;
+          console.log(data, "user/login");
+          commit("SET_TOKEN", data.token);
+          commit("SET_NAME", data.username);
+          commit("SET_ISADMIN", data.isAdmin);
+          localStorage.setItem(
+            "userdata",
+            JSON.stringify({ name: data.username, isAdmin: data.isAdmin })
+          );
+          setToken(data.token);
+          resolve();
+        })
+        .catch((error) => {
+          reject(error);
+        })
+        .finally(() => {
+          console.log("daoe");
+        });
+    });
   },
 
   // get user info
@@ -70,10 +89,10 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      removeToken() // must remove  token  first
-      resetRouter()
-      commit('RESET_STATE')
-      resolve()
+      removeToken(); // must remove  token  first
+      resetRouter();
+      commit("RESET_STATE");
+      resolve();
       // logout(state.token).then(() => {
       //   removeToken() // must remove  token  first
       //   resetRouter()
@@ -82,23 +101,22 @@ const actions = {
       // }).catch(error => {
       //   reject(error)
       // })
-    })
+    });
   },
 
   // remove token
   resetToken({ commit }) {
-    return new Promise(resolve => {
-      removeToken() // must remove  token  first
-      commit('RESET_STATE')
-      resolve()
-    })
-  }
-}
+    return new Promise((resolve) => {
+      removeToken(); // must remove  token  first
+      commit("RESET_STATE");
+      resolve();
+    });
+  },
+};
 
 export default {
   namespaced: true,
   state,
   mutations,
-  actions
-}
-
+  actions,
+};

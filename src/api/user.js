@@ -54,6 +54,38 @@ export function logout() {
   });
 }
 
+export function getUserslist(params) {
+  return request({
+    url: "/sys/api/get_userlist",
+    method: "get",
+    params,
+  });
+}
+
+export function delUser(data) {
+  return request({
+    url: "/sys/api/del_user",
+    method: "post",
+    data,
+  });
+}
+
+export function getuserDetail(params) {
+  return request({
+    url: "/sys/api/get_userdetail",
+    method: "get",
+    params,
+  });
+}
+
+export function editUser(data) {
+  return request({
+    url: "/sys/api/edit_user",
+    method: "post",
+    data,
+  });
+}
+
 export function getFileList(params) {
   return request({
     url: "/users/api/get_file_list",
@@ -102,6 +134,22 @@ export function editCompany(data) {
   });
 }
 
+export function getMetaDetail(params) {
+  return request({
+    url: "/sys/api/get_meta",
+    method: "get",
+    params,
+  });
+}
+
+export function editMeta(data) {
+  return request({
+    url: "/sys/api/edit_meta",
+    method: "post",
+    data,
+  });
+}
+
 export function getIndexDetail(params) {
   return request({
     url: "/sys/api/get_index",
@@ -113,6 +161,14 @@ export function getIndexDetail(params) {
 export function editIndex(data) {
   return request({
     url: "/sys/api/edit_index",
+    method: "post",
+    data,
+  });
+}
+
+export function editContent(data) {
+  return request({
+    url: "/sys/api/edit_content",
     method: "post",
     data,
   });

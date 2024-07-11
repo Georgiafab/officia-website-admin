@@ -1,5 +1,11 @@
 import request from "@/utils/request";
-
+export function addBrand(data) {
+  return request({
+    url: "/sys/api/add_brand",
+    method: "post",
+    data,
+  });
+}
 export function addClassfiy(data) {
   return request({
     url: "/sys/api/add_classfiy",
@@ -11,6 +17,13 @@ export function addClassfiy(data) {
 export function addProduct(data) {
   return request({
     url: "/sys/api/add_case",
+    method: "post",
+    data,
+  });
+}
+export function delBrand(data) {
+  return request({
+    url: "/sys/api/del_brand",
     method: "post",
     data,
   });
@@ -31,7 +44,21 @@ export function delProduct(data) {
     data,
   });
 }
+export function getBrandList(params) {
+  return request({
+    url: "/sys/api/get_brand_list",
+    method: "get",
+    params,
+  });
+}
 
+export function getBrandDetail(params) {
+  return request({
+    url: "/sys/api/get_brand_detail",
+    method: "get",
+    params,
+  });
+}
 export function getClassfiyList(params) {
   return request({
     url: "/sys/api/get_classfiy_list",
@@ -58,7 +85,7 @@ export function getClassfiyDetail(params) {
 
 export function getProductDetail(params) {
   return request({
-    url: "/sys/api/get_product_detail",
+    url: "/sys/api/get_case_detail",
     method: "get",
     params,
   });
