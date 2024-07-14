@@ -1,8 +1,8 @@
 {
   "name": "fortunatt",
   "version": "4.4.0",
-  "description": "深圳市富途锐科技发展有限公司",
-  "author": "Pan <panfree23@gmail.com>",
+  "description": "redesign",
+  "author": "",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",
