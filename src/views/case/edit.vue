@@ -22,6 +22,10 @@
           </el-select>
         </el-form-item>
       </div>
+
+      <el-form-item label="排序" prop="sort" :rules="rules">
+        <el-input-number v-model="form.sort" :min="0" />
+      </el-form-item>
       <el-form-item label="案例封面" prop="case_image" :rules="rules">
         <div style="display: flex">
           <el-input
@@ -33,6 +37,7 @@
       <el-form-item label="案例名称" prop="case_name" :rules="rules">
         <el-input v-model="form.case_name" />
       </el-form-item>
+
       <el-form-item label="案例副标题" prop="case_subname" :rules="rules">
         <el-input v-model="form.case_subname" />
       </el-form-item>

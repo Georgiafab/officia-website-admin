@@ -84,9 +84,11 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           this.loading = true;
-          editUser({
-            ...this.form,
-          })
+          const form = { ...this.form };
+          if (!form.password) {
+            delete form.password;
+          }
+          editUser(form)
             .then((res) => {
               if (res.code === 200) {
                 this.$message({ type: "success", message: "提交成功" });

@@ -24,6 +24,15 @@
       </el-table-column>
 
       <el-table-column label="案例名称" align="center" prop="case_name" />
+      <el-table-column label="排序" align="center" prop="sort" />
+      <el-table-column label="是否展示在首页" align="center" prop="isHome">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.isHome"
+            @change="handleChange(scope.row)"
+          />
+        </template>
+      </el-table-column>
       <el-table-column label="案例副标题" align="center" prop="case_subname" />
       <el-table-column label="案例封面图" align="center" prop="case_image">
         <template slot-scope="scope">
@@ -61,6 +70,7 @@ import {
   delProduct,
   getClassfiyList,
   getBrandList,
+  addProduct,
 } from "@/api/product";
 
 export default {
@@ -157,6 +167,13 @@ export default {
     },
     pageChange() {
       this.fetchData();
+    },
+    handleChange(item) {
+      addProduct({ _id: item._id, isHome: item.isHome }).then((res) => {
+        if (res.code === 200) {
+          this.$message({ type: "success", message: "修改成功" });
+        }
+      });
     },
   },
 };
