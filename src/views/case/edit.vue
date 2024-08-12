@@ -44,7 +44,9 @@
       <el-form-item label="案例描述" prop="case_desc" :rules="rules">
         <el-input v-model="form.case_desc" />
       </el-form-item>
-
+      <el-form-item label="案例描述英文" prop="case_desc_en">
+        <el-input v-model="form.case_desc_en" />
+      </el-form-item>
       <!-- <el-form-item label="案例详情banner" prop="case_banner" :rules="rules">
         <div style="display: flex">
           <el-input

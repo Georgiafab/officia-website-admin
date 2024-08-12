@@ -18,7 +18,7 @@
         >在当前路径中新建文件夹</el-button
       >
     </div>
-    <el-divider></el-divider>
+    <el-divider />
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item
         :to="{ path: currpath, query: { ...$route.query, dirpath: '' } }"
@@ -35,13 +35,13 @@
         {{ item.name }}
       </el-breadcrumb-item>
     </el-breadcrumb>
-    <el-divider></el-divider>
+    <el-divider />
     <el-input
-      placeholder="在当前文件夹下查找"
       v-model="search"
+      placeholder="在当前文件夹下查找"
       class="input-with-select"
     >
-      <el-button slot="append" icon="el-icon-search"></el-button>
+      <el-button slot="append" icon="el-icon-search" />
     </el-input>
 
     <!-- <input type="text" name="" placeholder=""> -->
@@ -49,13 +49,13 @@
     <ul class="file-list">
       <el-checkbox-group v-model="checkedCities">
         <li
-          :class="item.type"
           v-for="item in fileList"
           :key="item.title + item.hash"
+          :class="item.type"
           @dblclick="dirClick(item.type, item.title)"
         >
           <div class="right">
-            <el-checkbox :label="item.path"></el-checkbox>
+            <el-checkbox :label="item.path" />
             <div class="type">
               <el-image
                 v-if="item.type === 'img'"
@@ -64,34 +64,30 @@
                 fit="cover"
                 lazy
                 :preview-src-list="[`${path}${item.path}?v=${item.hash}`]"
-              >
-              </el-image>
+              />
               <!-- <img :src="" alt="" > -->
-              <i
-                v-else-if="item.type == 'dir'"
-                class="el-icon-folder-opened"
-              ></i>
-              <i v-else-if="item.type == 'file'" class="el-icon-tickets"></i>
+              <i v-else-if="item.type == 'dir'" class="el-icon-folder-opened" />
+              <i v-else-if="item.type == 'file'" class="el-icon-tickets" />
               <i
                 v-else-if="item.type == 'pdf'"
                 class="el-icon-collection"
                 @click="
                   reviewVideo(`${path}${item.path}?v=${item.hash}`, 'pdf')
                 "
-              ></i>
+              />
               <i
                 v-else-if="item.type == 'video'"
                 class="el-icon-video-camera"
                 @click="
                   reviewVideo(`${path}${item.path}?v=${item.hash}`, 'video')
                 "
-              ></i>
+              />
             </div>
 
             {{ item.title }}
             <span
-              style="font-size: 14px; color: #409eff; padding-left: 20px"
               v-if="item.type != 'dir'"
+              style="font-size: 14px; color: #409eff; padding-left: 20px"
             >
               ({{ item.size }})</span
             >
@@ -100,20 +96,20 @@
           <div class="left">
             <el-button
               v-if="item.type !== 'dir'"
-              type="success"
               v-clipboard="`${path}${item.path}?v=${item.hash}`"
               v-clipboard:success="clipboardSuccessHandler"
+              type="success"
               size="small"
               >复制</el-button
             >
-            <el-button type="danger" @click="delItem(item)" size="small"
+            <el-button type="danger" size="small" @click="delItem(item)"
               >删除</el-button
             >
-            <div class="repalce" v-if="item.type !== 'dir'">
+            <div v-if="item.type !== 'dir'" class="repalce">
               <el-upload
+                :ref="`upload`"
                 action="#"
                 :http-request="beforeUpload"
-                :ref="`upload`"
                 :data="{ ...item, utype: 'replace' }"
               >
                 <el-button type="warning" size="small">替换</el-button>
@@ -210,6 +206,22 @@ export default {
       return this.allFileList;
     },
   },
+
+  created() {
+    const dirpath = this.$route.query.dirpath;
+    console.log(dirpath);
+    // if (dirpath) {
+    //   this.path += dirpath + '/'
+    // }
+    this.fetchData();
+    if (!dirpath) return;
+    const pathArr = dirpath.split("/");
+    pathArr.reduce((total, current) => {
+      const path = `${total ? total + "/" : ""}${current}`;
+      this.pathList.push({ name: current, path });
+      return path;
+    }, "");
+  },
   methods: {
     dirClick(type, title) {
       if (type !== "dir") {
@@ -237,10 +249,13 @@ export default {
     },
     beforeUpload(file) {
       this.currFile = file;
-      this.dialogVisible = true;
+      // this.dialogVisible = true;
+      this.currFile.data.utype === "new"
+        ? this.handleUploads(this.currFile)
+        : this.replaceItem(this.currFile);
     },
     handleUploads(file) {
-      let imgData = new FormData();
+      const imgData = new FormData();
 
       imgData.append("img", file.file);
       imgData.append("dirpath", this.$route.query.dirpath || "");
@@ -256,13 +271,13 @@ export default {
     qualityComfig(isCompress) {
       console.log(this.currFile);
       this.isCompress = isCompress;
-      this.currFile.data.utype == "new"
+      this.currFile.data.utype === "new"
         ? this.handleUploads(this.currFile)
         : this.replaceItem(this.currFile);
       this.dialogVisible = false;
     },
     replaceItem(file) {
-      let imgData = new FormData();
+      const imgData = new FormData();
       imgData.append("img", file.file);
       imgData.append("path", file.data.path);
       this.isCompress ? imgData.append("quality", this.quality) : null;
@@ -336,22 +351,6 @@ export default {
     clipboardSuccessHandler() {
       this.$message.success("复制成功");
     },
-  },
-
-  created() {
-    const dirpath = this.$route.query.dirpath;
-    console.log(dirpath);
-    // if (dirpath) {
-    //   this.path += dirpath + '/'
-    // }
-    this.fetchData();
-    if (!dirpath) return;
-    const pathArr = dirpath.split("/");
-    pathArr.reduce((total, current) => {
-      const path = `${total ? total + "/" : ""}${current}`;
-      this.pathList.push({ name: current, path });
-      return path;
-    }, "");
   },
 };
 </script>
