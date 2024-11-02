@@ -19,19 +19,36 @@
 
       <!-- <el-table-column align="center" label="排序" width="270" prop="sort_num">
       </el-table-column> -->
-      <el-table-column
-        label="url 标题"
-        width="100"
-        align="center"
-        prop="enTitle"
-      />
+      <el-table-column label="_id" width="100" align="center" prop="_id" />
       <el-table-column label="分类" align="center" prop="brand_id">
         <template slot-scope="scope">
-          {{ scope.row.brand_id ? scope.row.brand_id.brand_name : "--" }}
+          {{ scope.row.brand_id ? scope.row.brand_id.name : "--" }}
         </template>
       </el-table-column>
 
-      <el-table-column label="产品类别" align="center" prop="classfiy_name" />
+      <el-table-column label="产品类别" align="center" prop="name" />
+      <el-table-column label="权重" align="center" prop="sort" />
+      <el-table-column label="创建时间" align="center" prop="createAt">
+        <template slot-scope="scope">
+          {{ new Date(scope.row.createAt).toLocaleString() }}
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" align="center" prop="updateAt">
+        <template slot-scope="scope">
+          {{ new Date(scope.row.updateAt).toLocaleString() }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label="创建人" align="center" prop="createdBy">
+        <template slot-scope="scope">
+          {{ scope.row.createdBy ? scope.row.createdBy.username : "--" }}
+        </template>
+      </el-table-column>
+      <el-table-column label="更新人" align="center" prop="updatedBy">
+        <template slot-scope="scope">
+          {{ scope.row.updatedBy ? scope.row.updatedBy.username : "--" }}
+        </template>
+      </el-table-column>
 
       <el-table-column label="操作" width="180" align="center">
         <template slot-scope="scope">
@@ -78,7 +95,7 @@ export default {
       queryParams: {},
       config: [
         { type: "select", label: "分类", key: "brand_id", options: {} },
-        { type: "input", label: "类别名称", key: "classfiy_name" },
+        { type: "input", label: "类别名称", key: "name" },
       ],
     };
   },
@@ -87,7 +104,7 @@ export default {
     getBrandList().then((res) => {
       const list = {};
       res.data.list.forEach((el) => {
-        list[el._id] = el.brand_name;
+        list[el._id] = el.name;
       });
       this.$set(this.config[0], "options", list);
     });

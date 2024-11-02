@@ -122,8 +122,13 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.loading = true;
+          const encodedPassword = btoa(this.loginForm.password); // Encode the password
+          const loginData = {
+            ...this.loginForm,
+            password: encodedPassword,
+          };
           this.$store
-            .dispatch("user/login", this.loginForm)
+            .dispatch("user/login", loginData)
             .then(() => {
               this.$router.push({ path: this.redirect || "/" });
               this.loading = false;

@@ -4,20 +4,20 @@
       <el-form-item label="用户名" prop="username" :rules="rules">
         <el-input v-model="form.username" />
       </el-form-item>
-      <el-form-item label="邮箱" prop="email" :rules="rules">
+      <!-- <el-form-item label="邮箱" prop="email" :rules="rules">
         <el-input v-model="form.email" />
       </el-form-item>
       <el-form-item label="电话" prop="phone" :rules="rules">
         <el-input v-model="form.phone" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="密码" prop="password">
-        <el-input v-model="form.password" />
+        <el-input v-model="form.password" type="password" />
       </el-form-item>
-      <el-form-item label="是否为管理员" prop="isAdmin">
+      <!-- <el-form-item label="是否为管理员" prop="isAdmin">
         <el-switch v-model="form.isAdmin" />
-      </el-form-item>
+      </el-form-item> -->
 
-      <el-form-item label="二维码" prop="qrcodeImg" :rules="rules">
+      <!-- <el-form-item label="二维码" prop="qrcodeImg" :rules="rules">
         <div style="display: flex">
           <el-input v-model="form.qrcodeImg" style="margin-right: 30px" />
           <Selectstatic>历史图片和文件</Selectstatic>
@@ -38,7 +38,7 @@
           />
           <i v-else class="el-icon-plus avatar-uploader-icon" />
         </el-upload>
-      </el-form-item>
+      </el-form-item> -->
 
       <el-form-item>
         <el-button type="primary" :loading="loading" @click="onSubmit"
@@ -52,10 +52,11 @@
 
 <script>
 import { upload, editUser, getuserDetail } from "@/api/user";
-import Selectstatic from "@/components/Selectstatic";
+// import md5 from "@/util/md5";
+// import Selectstatic from "@/components/Selectstatic";
 
 export default {
-  components: { Selectstatic },
+  // components: { Selectstatic },
 
   data() {
     return {
@@ -85,7 +86,9 @@ export default {
         if (valid) {
           this.loading = true;
           const form = { ...this.form };
-          if (!form.password) {
+          if (form.password) {
+            form.password = btoa(form.password);
+          } else {
             delete form.password;
           }
           editUser(form)
@@ -97,9 +100,9 @@ export default {
                   this.form = {
                     username: "",
                     password: "",
-                    qrcodeImg: "",
-                    phone: "",
-                    emial: "",
+                    // qrcodeImg: "",
+                    // phone: "",
+                    // emial: "",
                   };
                 }
               }

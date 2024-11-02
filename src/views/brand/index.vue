@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
-    <el-button @click="$router.push('/brand/edit')" type="success"
+    <el-button type="success" @click="$router.push('/brand/edit')"
       >新增</el-button
     >
-    <el-divider></el-divider>
+    <el-divider />
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -23,17 +23,18 @@
       <el-table-column align="center" label="排序" width="270" prop="sort_num">
       </el-table-column> -->
 
-      <el-table-column label="品牌名" align="center" prop="brand_name">
-      </el-table-column>
+      <el-table-column label="_id" align="center" prop="_id" />
+      <el-table-column label="id" align="center" prop="id" />
+      <el-table-column label="分类名" align="center" prop="name" />
 
       <el-table-column label="操作" width="180" align="center">
         <template slot-scope="scope">
           <el-button
-            @click="$router.push(`/brand/edit?id=${scope.row._id}`)"
             size="small"
+            @click="$router.push(`/brand/edit?id=${scope.row._id}`)"
             >编辑</el-button
           >
-          <el-button type="danger" @click="delItem(scope.row._id)" size="small"
+          <el-button type="danger" size="small" @click="delItem(scope.row._id)"
             >删除</el-button
           >
         </template>
@@ -45,8 +46,7 @@
       :total="queryParams.total"
       :current-page.sync="queryParams.page"
       @current-change="pageChange"
-    >
-    </el-pagination>
+    />
   </div>
 </template>
 

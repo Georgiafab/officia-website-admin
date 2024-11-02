@@ -14,12 +14,13 @@
       fit
       highlight-current-row
     >
+      <el-table-column label="_id" prop="_id" align="center" />
       <el-table-column label="用户名" prop="username" align="center" />
-      <el-table-column align="center" label="电话" prop="phone" />
+      <!-- <el-table-column align="center" label="电话" prop="phone" /> -->
 
-      <el-table-column label="邮箱" align="center" prop="email" />
+      <!-- <el-table-column label="邮箱" align="center" prop="email" /> -->
 
-      <el-table-column label="qrcodeImg" width="130" align="center">
+      <!-- <el-table-column label="qrcodeImg" width="130" align="center">
         <template slot-scope="scope">
           <el-image
             :src="scope.row.qrcodeImg"
@@ -29,7 +30,7 @@
             width="60px"
           />
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="操作" width="180" align="center">
         <template slot-scope="scope">
           <el-button

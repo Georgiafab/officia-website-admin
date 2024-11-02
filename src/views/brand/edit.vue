@@ -1,25 +1,35 @@
 <template>
   <div class="app-container">
-    <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="分类名称" prop="brand_name" :rules="rules">
-        <el-input v-model="form.brand_name" />
+    <el-form
+      ref="form"
+      :model="form"
+      label-width="120px"
+    >
+      <el-form-item
+        label="分类名称"
+        prop="name"
+        :rules="rules"
+      >
+        <el-input v-model="form.name" />
       </el-form-item>
-      <el-form-item label="url 标题" prop="enTitle" :rules="rules">
+      <!-- <el-form-item label="url 标题" prop="enTitle" :rules="rules">
         <el-input v-model="form.enTitle" />
-      </el-form-item>
+      </el-form-item> -->
 
       <!-- <el-form-item label="排序" prop="sort_num" :rules="rules">
         <el-input-number v-model="form.sort_num" />
       </el-form-item> -->
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" :loading="loading"
-          >提交</el-button
-        >
+        <el-button
+          type="primary"
+          :loading="loading"
+          @click="onSubmit"
+        >提交</el-button>
         <el-button @click="onCancel">返回</el-button>
       </el-form-item>
-    </el-form>
-  </div>
+      </el-form-item>
+    </el-form></div>
 </template>
 
 <script>
@@ -28,12 +38,24 @@ export default {
   data() {
     return {
       form: {
-        brand_name: "",
+        name: "",
         sort_num: 0,
       },
       loading: false,
       rules: { required: true, message: "该字段必填", trigger: "blur" },
     };
+  },
+  mounted() {
+    const id = this.$route.query.id;
+    id &&
+      getBrandDetail({ id }).then((res) => {
+        console.log(res, "res");
+        this.form = res.data;
+      });
+
+    // setTimeout(() => {
+    //   this.html = "<p>模拟 Ajax 异步设置内容 HTML</p>";
+    // }, 1500);
   },
   methods: {
     onSubmit() {
@@ -65,18 +87,6 @@ export default {
     onCancel() {
       this.$router.replace("/brand");
     },
-  },
-  mounted() {
-    const id = this.$route.query.id;
-    id &&
-      getBrandDetail({ id }).then((res) => {
-        console.log(res, "res");
-        this.form = res.data;
-      });
-
-    // setTimeout(() => {
-    //   this.html = "<p>模拟 Ajax 异步设置内容 HTML</p>";
-    // }, 1500);
   },
 };
 </script>

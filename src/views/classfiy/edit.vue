@@ -7,23 +7,31 @@
           <el-option
             v-for="item in options"
             :key="item._id"
-            :label="item.brand_name"
+            :label="item.name"
             :value="item._id"
-          >
-          </el-option>
+          />
         </el-select>
       </el-form-item>
 
-      <el-form-item label="类别名称" prop="classfiy_name" :rules="rules">
-        <el-input v-model="form.classfiy_name" />
+      <el-form-item label="类别名称" prop="name" :rules="rules">
+        <el-input v-model="form.name" />
       </el-form-item>
 
-      <el-form-item label="url 标题" prop="enTitle" :rules="rules">
-        <el-input v-model="form.enTitle" />
+      <el-form-item label="类别副标题" prop="subname" :rules="rules">
+        <el-input v-model="form.subname" />
       </el-form-item>
-
+      <el-form-item label="排序" prop="sort" :rules="rules">
+        <el-input-number v-model="form.sort" :min="0" />
+      </el-form-item>
+      <el-form-item label="类别图片" prop="image_src" :rules="rules">
+        <div style="display: flex">
+          <el-input v-model="form.image_src" style="margin-right: 30px" />
+          <el-image :src="form.image_src" />
+          <Selectstatic dirpath="template">历史图片和文件</Selectstatic>
+        </div>
+      </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="onSubmit" :loading="loading"
+        <el-button type="primary" :loading="loading" @click="onSubmit"
           >提交</el-button
         >
         <el-button @click="onCancel">返回</el-button>
@@ -34,7 +42,9 @@
 
 <script>
 import { getBrandList, addClassfiy, getClassfiyDetail } from "@/api/product";
+import Selectstatic from "@/components/Selectstatic";
 export default {
+  components: { Selectstatic },
   data() {
     return {
       form: {
@@ -47,6 +57,20 @@ export default {
       rules: { required: true, message: "该字段必填", trigger: "blur" },
     };
   },
+  mounted() {
+    const id = this.$route.query.id;
+    id &&
+      getClassfiyDetail({ id }).then((res) => {
+        console.log(res, "res");
+        this.form = res.data;
+      });
+
+    getBrandList().then((res) => {
+      if (res.code === 200) {
+        this.options = res.data.list;
+      }
+    });
+  },
   methods: {
     onSubmit() {
       this.$refs.form.validate((valid) => {
@@ -54,7 +78,6 @@ export default {
         if (valid) {
           addClassfiy({
             ...this.form,
-            enTitle: this.form.enTitle.toLowerCase().replace(/\s*/g, ""),
           })
             .then((res) => {
               if (res.code === 200) {
@@ -71,26 +94,14 @@ export default {
             .finally(() => {
               this.loading = false;
             });
+        } else {
+          this.loading = false;
         }
       });
     },
     onCancel() {
       this.$router.replace("/classfiy");
     },
-  },
-  mounted() {
-    const id = this.$route.query.id;
-    id &&
-      getClassfiyDetail({ id }).then((res) => {
-        console.log(res, "res");
-        this.form = res.data;
-      });
-
-    getBrandList().then((res) => {
-      if (res.code === 200) {
-        this.options = res.data.list;
-      }
-    });
   },
 };
 </script>

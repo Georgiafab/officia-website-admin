@@ -26,10 +26,10 @@
       <el-form-item label="排序" prop="sort" :rules="rules">
         <el-input-number v-model="form.sort" :min="0" />
       </el-form-item>
-      <el-form-item label="案例封面" prop="case_image" :rules="rules">
+      <el-form-item label="类别图片" prop="image_src" :rules="rules">
         <div style="display: flex">
           <el-input
-            v-model="form.case_image"
+            v-model="form.image_src"
             style="margin-right: 30px"
           /><Selectstatic dirpath="case">历史图片和文件</Selectstatic>
         </div>

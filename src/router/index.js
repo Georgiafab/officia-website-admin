@@ -107,14 +107,14 @@ export const constantRoutes = [
         path: "index",
         name: "Classfiy",
         component: () => import("@/views/classfiy/index"),
-        meta: { title: "案例类别", icon: "el-icon-s-management" },
+        meta: { title: "模板类别", icon: "el-icon-s-management" },
       },
       {
         path: "edit",
         name: "ClassfiyEdit",
         component: () => import("@/views/classfiy/edit"),
         hidden: true,
-        meta: { title: "新增编辑案例类别", icon: "form" },
+        meta: { title: "新增编辑模板类别", icon: "form" },
       },
     ],
   },
@@ -127,30 +127,30 @@ export const constantRoutes = [
         path: "index",
         name: "Case",
         component: () => import("@/views/case/index"),
-        meta: { title: "案例", icon: "el-icon-s-open" },
+        meta: { title: "模板", icon: "el-icon-s-open" },
       },
       {
         path: "edit",
         name: "CaseEdit",
         component: () => import("@/views/case/edit"),
         hidden: true,
-        meta: { title: "新增编辑案例", icon: "form" },
+        meta: { title: "新增编辑模板", icon: "form" },
       },
     ],
   },
-  {
-    path: "/meta",
-    component: Layout,
-    redirect: "/meta/index",
-    children: [
-      {
-        path: "index",
-        name: "Meta",
-        component: () => import("@/views/meta/index"),
-        meta: { title: "页面meta信息", icon: "el-icon-s-check" },
-      },
-    ],
-  },
+  // {
+  //   path: "/meta",
+  //   component: Layout,
+  //   redirect: "/meta/index",
+  //   children: [
+  //     {
+  //       path: "index",
+  //       name: "Meta",
+  //       component: () => import("@/views/meta/index"),
+  //       meta: { title: "页面meta信息", icon: "el-icon-s-check" },
+  //     },
+  //   ],
+  // },
   // {
   //   path: "/homepage",
   //   component: Layout,
@@ -164,19 +164,19 @@ export const constantRoutes = [
   //     },
   //   ],
   // },
-  {
-    path: "/text-edit",
-    component: Layout,
-    redirect: "/text-edit/index",
-    children: [
-      {
-        path: "",
-        name: "Textedit",
-        component: () => import("@/views/textedit/index"),
-        meta: { title: "页面静态文字编辑", icon: "el-icon-s-data" },
-      },
-    ],
-  },
+  // {
+  //   path: "/text-edit",
+  //   component: Layout,
+  //   redirect: "/text-edit/index",
+  //   children: [
+  //     {
+  //       path: "",
+  //       name: "Textedit",
+  //       component: () => import("@/views/textedit/index"),
+  //       meta: { title: "页面静态文字编辑", icon: "el-icon-s-data" },
+  //     },
+  //   ],
+  // },
   {
     path: "/users",
     component: Layout,

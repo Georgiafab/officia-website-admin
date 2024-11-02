@@ -11,7 +11,7 @@ export default {
   name: "AppMain",
   computed: {
     key() {
-      const ignor = ["NewsEdit", "ProductEdit", "CaseEdit"];
+      const ignor = ["NewsEdit", "ProductEdit", "CaseEdit", "ClassfiyEdit"];
       if (ignor.includes(this.$route.name)) {
         return this.$route.path + this.$route.query.id;
       }
