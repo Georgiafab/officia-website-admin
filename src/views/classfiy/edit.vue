@@ -25,9 +25,11 @@
       </el-form-item>
       <el-form-item label="类别图片" prop="image_src" :rules="rules">
         <div style="display: flex">
-          <el-input v-model="form.image_src" style="margin-right: 30px" />
-          <el-image :src="form.image_src" />
-          <Selectstatic dirpath="template">历史图片和文件</Selectstatic>
+          <!-- <el-input v-model="form.image_src" style="margin-right: 30px" /> -->
+          <!-- <el-image :src="form.image_src" /> -->
+          <UpdateInput v-model="form.image_src" dirpath="template"
+            >历史图片和文件</UpdateInput
+          >
         </div>
       </el-form-item>
       <el-form-item>
@@ -42,9 +44,9 @@
 
 <script>
 import { getBrandList, addClassfiy, getClassfiyDetail } from "@/api/product";
-import Selectstatic from "@/components/Selectstatic";
+import UpdateInput from "@/components/UpdateInput";
 export default {
-  components: { Selectstatic },
+  components: { UpdateInput },
   data() {
     return {
       form: {

@@ -89,6 +89,7 @@ export default {
           options: {},
         },
         { type: "select", label: "类别", key: "classfiy_id", options: {} },
+        { type: "input", label: "puid", key: "puid" },
         { type: "input", label: "案例名称", key: "case_name" },
       ],
     };
@@ -107,7 +108,7 @@ export default {
     getBrandList().then((res) => {
       const list = {};
       res.data.list.forEach((el) => {
-        list[el._id] = el.brand_name;
+        list[el._id] = el.name;
       });
       this.$set(this.config[0], "options", list);
     });
@@ -116,7 +117,7 @@ export default {
         const list = {};
         this.brand_list = res.data.list;
         res.data.list.forEach((el) => {
-          list[el._id] = el.classfiy_name;
+          list[el._id] = el.name;
         });
         this.$set(this.config[1], "options", list);
       }
@@ -142,7 +143,7 @@ export default {
         return item.brand_id._id === val;
       });
       list.forEach((el) => {
-        showl[el._id] = el.classfiy_name;
+        showl[el._id] = el.name;
       });
       this.$refs.searchRef.form.classfiy_id = null;
       this.$set(this.config[1], "options", showl);
