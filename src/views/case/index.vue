@@ -14,29 +14,51 @@
       fit
       highlight-current-row
     >
-      <el-table-column label="案例类别" align="center" prop="classfiy_id">
+      <el-table-column label="分类" align="center" prop="brand_id">
         <template slot-scope="scope">
-          {{
-            scope.row.classfiy_id1 && scope.row.classfiy_id1.classfiy_name + ","
-          }}
-          {{ scope.row.classfiy_id2 && scope.row.classfiy_id2.classfiy_name }}
+          {{ scope.row.brand_id && scope.row.brand_id.name }}
+        </template>
+      </el-table-column>
+      <el-table-column label="类别" align="center" prop="classfiy_id">
+        <template slot-scope="scope">
+          {{ scope.row.classfiy_id && scope.row.classfiy_id.name }}
         </template>
       </el-table-column>
 
-      <el-table-column label="案例名称" align="center" prop="case_name" />
+      <el-table-column label="名称" align="center" prop="name" />
       <el-table-column label="排序" align="center" prop="sort" />
-      <el-table-column label="是否展示在首页" align="center" prop="isHome">
+      <el-table-column label="图片" align="center" prop="image">
+        <!-- <el-table-column label="视频" align="center" prop="video"> -->
         <template slot-scope="scope">
-          <el-switch
-            v-model="scope.row.isHome"
-            @change="handleChange(scope.row)"
-          />
+          <el-image :src="scope.row.image" alt="" style="width: 40px" />
         </template>
       </el-table-column>
-      <el-table-column label="案例副标题" align="center" prop="case_subname" />
-      <el-table-column label="案例封面图" align="center" prop="case_image">
+
+      <el-table-column label="puid" align="center" prop="puids">
+        <!-- <el-table-column label="视频" align="center" prop="video"> -->
         <template slot-scope="scope">
-          <img :src="scope.row.case_image" alt="" width="90px" />
+          {{ scope.row.puids || "--" }}
+        </template>
+      </el-table-column>
+      <el-table-column label="创建时间" align="center" prop="createAt">
+        <template slot-scope="scope">
+          {{ new Date(scope.row.createAt).toLocaleString() }}
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" align="center" prop="updateAt">
+        <template slot-scope="scope">
+          {{ new Date(scope.row.updateAt).toLocaleString() }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label="创建人" align="center" prop="createdBy">
+        <template slot-scope="scope">
+          {{ scope.row.createdBy ? scope.row.createdBy.username : "--" }}
+        </template>
+      </el-table-column>
+      <el-table-column label="更新人" align="center" prop="updatedBy">
+        <template slot-scope="scope">
+          {{ scope.row.updatedBy ? scope.row.updatedBy.username : "--" }}
         </template>
       </el-table-column>
 
@@ -51,8 +73,8 @@
             >删除</el-button
           >
         </template>
-      </el-table-column>
-    </el-table>
+      </el-table-column></el-table
+    >
 
     <el-pagination
       style="text-align: right; margin-top: 20px"
@@ -71,6 +93,7 @@ import {
   getClassfiyList,
   getBrandList,
   addProduct,
+  getPuids,
 } from "@/api/product";
 
 export default {
@@ -89,7 +112,7 @@ export default {
           options: {},
         },
         { type: "select", label: "类别", key: "classfiy_id", options: {} },
-        { type: "input", label: "puid", key: "puid" },
+        { type: "select", label: "puid", key: "puid", options: {} },
         { type: "input", label: "案例名称", key: "case_name" },
       ],
     };
@@ -122,6 +145,13 @@ export default {
         this.$set(this.config[1], "options", list);
       }
     );
+    getPuids().then((res) => {
+      const list = {};
+      res.data.forEach((el) => {
+        list[el._id] = el.puid;
+      });
+      this.$set(this.config[0], "options", list);
+    });
   },
   methods: {
     fetchData(queryParams = {}) {

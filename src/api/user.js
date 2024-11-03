@@ -173,3 +173,81 @@ export function editContent(data) {
     data,
   });
 }
+
+export function delBanner(data) {
+  return request({
+    url: "/sys/api/del_banner",
+    method: "post",
+    data,
+  });
+}
+
+export function getBanners(params) {
+  return request({
+    url: "/sys/api/get_banners",
+    method: "get",
+    params,
+  });
+}
+export function getbannerDetaill(params) {
+  return request({
+    url: "/sys/api/get_bannerdetail",
+    method: "get",
+    params,
+  });
+}
+
+export function addBanner(data) {
+  return request({
+    url: "/sys/api/add_banner",
+    method: "post",
+    data,
+  });
+}
+
+export function getTasks(params) {
+  return request({
+    url: "/sys/api/get_tasks",
+    method: "get",
+    params,
+  });
+}
+
+export function delTasks(data) {
+  return request({
+    url: "/sys/api/del_task",
+    method: "post",
+    data,
+  });
+}
+
+export function delFilePro(data) {
+  return request({
+    url: "/sys/api/del_file",
+    method: "post",
+    data,
+  });
+}
+
+export function getFilesPro(params) {
+  return request({
+    url: "/sys/api/get_file_list",
+    method: "get",
+    params,
+  });
+}
+export function getFileProDetail(params) {
+  return request({
+    url: "/sys/api/get_file_detail",
+    method: "get",
+    params,
+  });
+}
+
+export function addFilePro(data) {
+  return request({
+    url: "/sys/api/add_file",
+    method: "post",
+    data,
+  });
+}

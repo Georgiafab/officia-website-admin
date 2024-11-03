@@ -8,7 +8,7 @@
       fit="cover"
     />
     <el-button
-      v-else-if="inputValue"
+      v-else-if="isVideo"
       type="success"
       icon="el-icon-video-camera"
       style="margin-left: 20px"
@@ -40,6 +40,7 @@ export default {
     return {
       inputValue: this.value,
       isImage: false,
+      isVideo: false,
       show: false,
       videoUrl: "",
     };
@@ -56,6 +57,9 @@ export default {
   methods: {
     valueChange() {
       this.isImage = /.png|.jpg|.svg|.jpeg|.gif|.webp/g.test(this.inputValue);
+      this.isVideo = /.mp4|.avi|.mov|.wmv|.flv|.mkv|.webm/g.test(
+        this.inputValue
+      );
     },
     reviewVideo() {
       this.videoUrl = this.inputValue;

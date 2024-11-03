@@ -1,32 +1,32 @@
 <template>
   <div class="app-container">
     <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="类别分类名称" prop="brand_id" :rules="rules">
-        <!-- <el-input v-model="form.brand_name" /> -->
-        <el-select v-model="form.brand_id" placeholder="请选择">
+      <el-form-item label="键" prop="key" :rules="rules">
+        <el-input v-model="form.key" />
+      </el-form-item>
+      <el-form-item label="配置类型" prop="type" :rules="rules">
+        <el-radio-group v-model="form.type">
+          <el-radio label="键值对">键值对</el-radio>
+          <el-radio label="文件">文件</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="产品" prop="product" :rules="rules">
+        <el-select v-model="form.product" placeholder="请选择">
           <el-option
-            v-for="item in options"
+            v-for="item in list"
             :key="item._id"
             :label="item.name"
             :value="item._id"
           />
         </el-select>
       </el-form-item>
-
-      <el-form-item label="类别名称" prop="name" :rules="rules">
-        <el-input v-model="form.name" />
-      </el-form-item>
-
-      <el-form-item label="类别副标题" prop="subname" :rules="rules">
-        <el-input v-model="form.subname" />
-      </el-form-item>
-      <el-form-item label="排序" prop="sort" :rules="rules">
-        <el-input-number v-model="form.sort" :min="0" />
-      </el-form-item>
-      <el-form-item label="类别图片" prop="image_src" :rules="rules">
-        <UpdateInput v-model="form.image_src" dirpath="template"
-          >历史图片和文件</UpdateInput
+      <el-form-item label="文件" prop="filepath" :rules="rules">
+        <UpdateInput v-model="form.filepath" dirpath="products"
+          >点击上传文件</UpdateInput
         >
+      </el-form-item>
+      <el-form-item label="自定义描述" prop="desc">
+        <el-input v-model="form.desc" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" :loading="loading" @click="onSubmit"
@@ -39,18 +39,18 @@
 </template>
 
 <script>
-import { getBrandList, addClassfiy, getClassfiyDetail } from "@/api/product";
+import { addFilePro, getFileProDetail } from "@/api/user";
+import { getProList } from "@/api/product";
+
 import UpdateInput from "@/components/UpdateInput";
 export default {
   components: { UpdateInput },
   data() {
     return {
       form: {
-        brand_id: "",
-        classfiy_name: "",
-        // sort_num: 0,
+        type: "文件",
       },
-      options: [],
+      list: [],
       loading: false,
       rules: { required: true, message: "该字段必填", trigger: "blur" },
     };
@@ -58,15 +58,13 @@ export default {
   mounted() {
     const id = this.$route.query.id;
     id &&
-      getClassfiyDetail({ id }).then((res) => {
+      getFileProDetail({ id }).then((res) => {
         console.log(res, "res");
         this.form = res.data;
       });
 
-    getBrandList().then((res) => {
-      if (res.code === 200) {
-        this.options = res.data.list;
-      }
+    getProList().then((res) => {
+      this.list = res.data.list;
     });
   },
   methods: {
@@ -74,8 +72,9 @@ export default {
       this.$refs.form.validate((valid) => {
         this.loading = true;
         if (valid) {
-          addClassfiy({
+          addFilePro({
             ...this.form,
+            // enTitle: this.form.enTitle.toLowerCase().replace(/\s*/g, ""),
           })
             .then((res) => {
               if (res.code === 200) {
@@ -83,8 +82,7 @@ export default {
                 // this.$router.replace('/news')
                 if (!this.$route.query.id) {
                   this.form = {
-                    brand_id: "",
-                    classfiy_name: "",
+                    type: "文件",
                   };
                 }
               }
@@ -92,13 +90,11 @@ export default {
             .finally(() => {
               this.loading = false;
             });
-        } else {
-          this.loading = false;
         }
       });
     },
     onCancel() {
-      this.$router.replace("/classfiy");
+      this.$router.replace("/files");
     },
   },
 };

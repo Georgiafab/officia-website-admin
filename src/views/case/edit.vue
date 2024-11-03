@@ -1,52 +1,59 @@
 <template>
   <div class="app-container">
     <el-form ref="form" :model="form" label-width="140px">
-      <div class="classify-grop">
-        <el-form-item
-          v-for="(bra, index) in options"
-          :key="bra._id"
-          :label="bra.brand_name"
-          :prop="'classfiy_id' + (index + 1)"
-          :rules="rules"
+      <el-form-item label="分类" prop="brand_id" :rules="rules">
+        <el-select
+          v-model="form.brand_id"
+          filterable
+          placeholder="请选择"
+          @change="brandChange"
         >
-          <el-select
-            v-model="form['classfiy_id' + (index + 1)]"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in classfiyOptions[bra._id]"
-              :key="item._id"
-              :label="item.classfiy_name"
-              :value="item._id"
-            />
-          </el-select>
-        </el-form-item>
-      </div>
-
+          <el-option
+            v-for="item in options"
+            :key="item._id"
+            :label="item.name"
+            :value="item._id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item
+        v-if="form.brand_id"
+        label="模板名称"
+        prop="classfiy_id"
+        :rules="rules"
+      >
+        <el-select v-model="form.classfiy_id" placeholder="请选择">
+          <el-option
+            v-for="item in classfiyOptions"
+            :key="item._id"
+            :label="item.name"
+            :value="item._id"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="类别名称" prop="name" :rules="rules">
+        <el-input v-model="form.name" />
+      </el-form-item>
       <el-form-item label="排序" prop="sort" :rules="rules">
         <el-input-number v-model="form.sort" :min="0" />
       </el-form-item>
-      <el-form-item label="类别图片" prop="image_src" :rules="rules">
-        <div style="display: flex">
-          <el-input
-            v-model="form.image_src"
-            style="margin-right: 30px"
-          /><Selectstatic dirpath="case">历史图片和文件</Selectstatic>
-        </div>
-      </el-form-item>
-      <el-form-item label="案例名称" prop="case_name" :rules="rules">
-        <el-input v-model="form.case_name" />
+
+      <el-form-item label="图片" prop="image" :rules="rules">
+        <UpdateInput v-model="form.image" dirpath="template" />
       </el-form-item>
 
-      <el-form-item label="案例副标题" prop="case_subname" :rules="rules">
-        <el-input v-model="form.case_subname" />
+      <el-form-item label="视频" prop="video" :rules="rules">
+        <UpdateInput v-model="form.video" dirpath="template" />
       </el-form-item>
-      <el-form-item label="案例描述" prop="case_desc" :rules="rules">
-        <el-input v-model="form.case_desc" />
+      <el-form-item label="场景参数" prop="params">
+        <el-input
+          v-model="form.params"
+          type="textarea"
+          :rows="2"
+          placeholder="请输入内容"
+        />
       </el-form-item>
-      <el-form-item label="案例描述英文" prop="case_desc_en">
-        <el-input v-model="form.case_desc_en" />
-      </el-form-item>
+
       <!-- <el-form-item label="案例详情banner" prop="case_banner" :rules="rules">
         <div style="display: flex">
           <el-input
@@ -63,32 +70,6 @@
           fit="cover"
         />
       </el-form-item> -->
-
-      <el-form-item label="案例url" prop="case_uri" :rules="rules">
-        <el-input v-model="form.case_uri" />
-      </el-form-item>
-      <el-form-item label="在首页展示" prop="isHome">
-        <el-switch v-model="form.isHome" />
-      </el-form-item>
-
-      <el-form-item label="内容" prop="content" :rules="rules">
-        <div style="border: 1px solid #ccc">
-          <Toolbar
-            class="toolbar"
-            style="border-bottom: 1px solid #ccc"
-            :editor="editor"
-            :default-config="toolbarConfig"
-            :mode="mode"
-          />
-          <Editor
-            v-model="form.content"
-            style="height: 500px; overflow-y: hidden"
-            :default-config="editorConfig"
-            :mode="mode"
-            @onCreated="onCreated"
-          />
-        </div>
-      </el-form-item>
 
       <!-- <div class="product-list">
         <el-form-item
@@ -143,20 +124,22 @@ import {
   getBrandList,
 } from "@/api/product";
 import { upload } from "@/api/user";
-import Selectstatic from "@/components/Selectstatic";
-import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
-import "@wangeditor/editor/dist/css/style.css";
+// import Selectstatic from "@/components/Selectstatic";
+// import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
+// import "@wangeditor/editor/dist/css/style.css";
+import UpdateInput from "@/components/UpdateInput";
 
 export default {
-  components: { Selectstatic, Editor, Toolbar },
+  components: { UpdateInput },
   data() {
     return {
       form: {
         brand_id: "",
         classfiy_id: "",
-        product_name: "",
-        product_image: "",
-        detail_pdf: [{ value: "", uid: 0 }],
+        name: "",
+        sort: 0,
+        image: "",
+        video: "",
         // sort_num: 0,
       },
       options: [],
@@ -186,22 +169,23 @@ export default {
 
   mounted() {
     const id = this.$route.query.id;
-    this.brandChange();
+
+    console.log(id, "id");
     id &&
       getProductDetail({ id }).then((res) => {
         this.form = res.data;
       });
+    this.brandChange();
 
     getBrandList().then((res) => {
       if (res.code === 200) {
         this.options = res.data.list;
-        console.log(this.options);
       }
     });
   },
   methods: {
     onCreated(editor) {
-      this.editor = Object.seal(editor); // 一定要用 Object.seal() ，否则会报错
+      // this.editor = Object.seal(editor); // 一定要用 Object.seal() ，否则会报错
     },
     onSubmit() {
       this.$refs.form.validate((valid) => {
@@ -214,11 +198,12 @@ export default {
                 // this.$router.replace('/news')
                 if (!this.$route.query.id) {
                   this.form = {
-                    bbrand_id: "",
+                    brand_id: "",
                     classfiy_id: "",
-                    product_name: "",
-                    product_image: "",
-                    detail_pdf: [{ value: "", uid: 0 }],
+                    name: "",
+                    sort: 0,
+                    image: "",
+                    video: "",
                   };
                 }
               }
@@ -259,18 +244,13 @@ export default {
       this.$router.replace("/case");
     },
     brandChange() {
-      getClassfiyList({ size: 1000 }).then((res) => {
-        if (res.code === 200) {
-          const obj = {};
-
-          res.data.list.forEach((el) => {
-            obj[el.brand_id._id]
-              ? obj[el.brand_id._id].push(el)
-              : (obj[el.brand_id._id] = [el]);
-          });
-          this.classfiyOptions = obj;
+      getClassfiyList({ brand_id: this.form.brand_id, size: 1000 }).then(
+        (res) => {
+          if (res.code === 200) {
+            this.classfiyOptions = res.data.list;
+          }
         }
-      });
+      );
     },
     addPdf() {
       this.form.detail_pdf.push({
@@ -292,6 +272,7 @@ export default {
 .line {
   text-align: center;
 }
+
 .classify-grop {
   display: flex;
 }
@@ -303,6 +284,7 @@ export default {
   position: relative;
   overflow: hidden;
 }
+
 .avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
@@ -311,6 +293,7 @@ export default {
   line-height: 178px;
   text-align: center;
 }
+
 .avatar {
   width: 178px;
   height: 178px;

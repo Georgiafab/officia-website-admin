@@ -1,69 +1,10 @@
 <template>
   <div class="app-container">
     <el-form ref="form" :model="form" label-width="120px">
-      <el-form-item label="新闻标题" prop="title" :rules="rules">
-        <el-input v-model="form.title" />
-      </el-form-item>
-      <el-form-item label="url 标题" prop="enTitle" :rules="rules">
-        <el-input v-model="form.enTitle" />
-      </el-form-item>
-      <el-form-item label="新闻描述" prop="desc" :rules="rules">
-        <el-input v-model="form.desc" type="textarea" />
+      <el-form-item label="产品名" prop="name" :rules="rules">
+        <el-input v-model="form.name" />
       </el-form-item>
 
-      <el-form-item label="新闻封面" prop="cover" :rules="rules">
-        <div style="display: flex">
-          <el-input v-model="form.cover" style="margin-right: 30px" />
-          <Selectstatic dirpath="news">历史图片和文件</Selectstatic>
-        </div>
-        <el-upload
-          action="#"
-          class="avatar-uploader"
-          :http-request="uploadCoverImg"
-          :show-file-list="false"
-          style="margin-top: 10px"
-        >
-          <el-image
-            v-if="form.cover"
-            :src="form.cover"
-            class="avatar"
-            fit="cover"
-            :preview-src-list="[form.cover]"
-          />
-          <i v-else class="el-icon-plus avatar-uploader-icon" />
-        </el-upload>
-      </el-form-item>
-
-      <el-form-item label="发布时间" prop="time" :rules="rules">
-        <el-date-picker
-          v-model="form.time"
-          type="date"
-          placeholder="选择日期"
-          style="width: 100%"
-        />
-      </el-form-item>
-      <el-form-item label="在首页展示" prop="isHome" :rules="rules">
-        <el-switch v-model="form.isHome" />
-      </el-form-item>
-
-      <el-form-item label="内容" prop="content" :rules="rules">
-        <div style="border: 1px solid #ccc">
-          <Toolbar
-            class="toolbar"
-            style="border-bottom: 1px solid #ccc"
-            :editor="editor"
-            :default-config="toolbarConfig"
-            :mode="mode"
-          />
-          <Editor
-            v-model="form.content"
-            style="height: 500px; overflow-y: hidden"
-            :default-config="editorConfig"
-            :mode="mode"
-            @onCreated="onCreated"
-          />
-        </div>
-      </el-form-item>
       <el-form-item>
         <el-button type="primary" :loading="loading" @click="onSubmit"
           >提交</el-button
@@ -77,40 +18,19 @@
 <script>
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import "@wangeditor/editor/dist/css/style.css";
-import { upload, addNew, getnewDetail } from "@/api/user";
-import Selectstatic from "@/components/Selectstatic";
+import { upload, addPro, getProDetail } from "@/api/product";
+// import Selectstatic from "@/components/Selectstatic";
 
 export default {
-  components: { Editor, Toolbar, Selectstatic },
+  // components: { Editor, Toolbar, Selectstatic },
 
   data() {
     return {
       form: {
-        title: "",
-        time: "",
-        cover: "",
-        desc: "",
-        isHome: false,
-        content: "",
+        name: "",
       },
       loading: false,
-      editor: null,
-      html: "<p>hello</p>",
-      toolbarConfig: {},
-      editorConfig: {
-        placeholder: "请输入内容...",
-        MENU_CONF: {
-          uploadImage: {
-            customUpload: this.uploadImg,
-            customInsert(res, insertFn) {
-              console.log(res, "resresres");
-            },
-          },
-          uploadVideo: {
-            customUpload: this.uploadImg,
-          },
-        },
-      },
+
       mode: "default", // or 'simple'
       rules: { required: true, message: "该字段必填", trigger: "blur" },
     };
@@ -118,7 +38,7 @@ export default {
   mounted() {
     const id = this.$route.query.id;
     id &&
-      getnewDetail({ id }).then((res) => {
+      getProDetail({ id }).then((res) => {
         console.log(res, "res");
         this.form = res.data;
       });
@@ -140,9 +60,9 @@ export default {
       this.$refs.form.validate((valid) => {
         this.loading = true;
         if (valid) {
-          addNew({
+          addPro({
             ...this.form,
-            enTitle: this.form.enTitle.toLowerCase().replace(/\s*/g, ""),
+            // enTitle: this.form.enTitle.toLowerCase().replace(/\s*/g, ""),
           })
             .then((res) => {
               if (res.code === 200) {
@@ -150,12 +70,7 @@ export default {
                 // this.$router.replace('/news')
                 if (!this.$route.query.id) {
                   this.form = {
-                    title: "",
-                    time: "",
-                    cover: "",
-                    desc: "",
-                    isHome: false,
-                    content: "",
+                    name: "",
                   };
                 }
               }
@@ -167,7 +82,7 @@ export default {
       });
     },
     onCancel() {
-      this.$router.replace("/news");
+      this.$router.replace("/product");
     },
     uploadCoverImg(file) {
       // const _this= this;

@@ -56,28 +56,79 @@ export const constantRoutes = [
       },
     ],
   },
-  // {
-  //   path: "/news",
-  //   component: Layout,
-  //   redirect: "/news/index",
-  //   // name: 'News',
-  //   // meta: { title: '新闻', icon: 'form' },
-  //   children: [
-  //     {
-  //       path: "index",
-  //       name: "News",
-  //       component: () => import("@/views/news/index"),
-  //       meta: { title: "新闻", icon: "form" },
-  //     },
-  //     {
-  //       path: "edit",
-  //       name: "NewsEdit",
-  //       component: () => import("@/views/news/edit"),
-  //       hidden: true,
-  //       meta: { title: "新增编辑新闻", icon: "el-icon-s-cooperation" },
-  //     },
-  //   ],
-  // },
+  {
+    path: "/product",
+    component: Layout,
+    redirect: "/product/index",
+    children: [
+      {
+        path: "index",
+        name: "Product",
+        component: () => import("@/views/news/index"),
+        meta: { title: "产品", icon: "form" },
+      },
+      {
+        path: "edit",
+        name: "ProductEdit",
+        component: () => import("@/views/news/edit"),
+        hidden: true,
+        meta: { title: "新增编辑产品", icon: "el-icon-s-cooperation" },
+      },
+    ],
+  },
+  {
+    path: "/banner",
+    component: Layout,
+    redirect: "/banner/index",
+    children: [
+      {
+        path: "index",
+        name: "Banner",
+        component: () => import("@/views/banner/index"),
+        meta: { title: "banner", icon: "nested" },
+      },
+      {
+        path: "edit",
+        name: "BannerEdit",
+        component: () => import("@/views/banner/edit"),
+        hidden: true,
+        meta: { title: "新增编辑banner", icon: "el-icon-s-cooperation" },
+      },
+    ],
+  },
+  {
+    path: "/files",
+    component: Layout,
+    redirect: "/files/index",
+    children: [
+      {
+        path: "index",
+        name: "Files",
+        component: () => import("@/views/files/index"),
+        meta: { title: "文件配置", icon: "nested" },
+      },
+      {
+        path: "edit",
+        name: "FilesEdit",
+        component: () => import("@/views/files/edit"),
+        hidden: true,
+        meta: { title: "新增编辑文件配置", icon: "el-icon-s-cooperation" },
+      },
+    ],
+  },
+  {
+    path: "/task",
+    component: Layout,
+    redirect: "/task/index",
+    children: [
+      {
+        path: "index",
+        name: "Task",
+        component: () => import("@/views/task/index"),
+        meta: { title: "任务列表", icon: "nested" },
+      },
+    ],
+  },
   {
     path: "/brand",
     component: Layout,

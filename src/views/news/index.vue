@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
-    <el-button @click="$router.push('/news/edit')" type="success"
+    <el-button type="success" @click="$router.push('/product/edit')"
       >新增</el-button
     >
-    <el-divider></el-divider>
+    <el-divider />
     <SearchHeader :config="config" @onSubmit="onSearch" />
-    <el-divider></el-divider>
+    <el-divider />
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -14,40 +14,37 @@
       fit
       highlight-current-row
     >
-      <el-table-column
-        label="url 标题"
-        width="100"
-        prop="enTitle"
-        align="center"
-      >
-      </el-table-column>
-      <el-table-column align="center" label="新闻标题" width="270" prop="title">
-      </el-table-column>
-
-      <el-table-column label="新闻描述" align="center" prop="desc">
-      </el-table-column>
-
-      <el-table-column label="新闻时间" prop="time" width="110">
-      </el-table-column>
-      <el-table-column label="封面图" width="130" align="center">
+      <el-table-column align="center" label="ID" width="270" prop="_id" />
+      <el-table-column align="center" label="产品名" width="270" prop="name" />
+      <el-table-column label="创建时间" align="center" prop="createAt">
         <template slot-scope="scope">
-          <el-image
-            :src="scope.row.cover"
-            fit="cover"
-            :preview-src-list="[scope.row.cover]"
-            alt=""
-            width="90px"
-          />
+          {{ new Date(scope.row.createAt).toLocaleString() }}
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" align="center" prop="updateAt">
+        <template slot-scope="scope">
+          {{ new Date(scope.row.updateAt).toLocaleString() }}
+        </template>
+      </el-table-column>
+
+      <el-table-column label="创建人" align="center" prop="createdBy">
+        <template slot-scope="scope">
+          {{ scope.row.createdBy ? scope.row.createdBy.username : "--" }}
+        </template>
+      </el-table-column>
+      <el-table-column label="更新人" align="center" prop="updatedBy">
+        <template slot-scope="scope">
+          {{ scope.row.updatedBy ? scope.row.updatedBy.username : "--" }}
         </template>
       </el-table-column>
       <el-table-column label="操作" width="180" align="center">
         <template slot-scope="scope">
           <el-button
-            @click="$router.push(`/news/edit?id=${scope.row._id}`)"
             size="small"
+            @click="$router.push(`/product/edit?id=${scope.row._id}`)"
             >编辑</el-button
           >
-          <el-button type="danger" @click="delItem(scope.row._id)" size="small"
+          <el-button type="danger" size="small" @click="delItem(scope.row._id)"
             >删除</el-button
           >
         </template>
@@ -60,13 +57,12 @@
       :total="queryParams.total"
       :current-page.sync="queryParams.page"
       @current-change="pageChange"
-    >
-    </el-pagination>
+    />
   </div>
 </template>
 
 <script>
-import { getnewList, delNew } from "@/api/user";
+import { getProList, delPro } from "@/api/product";
 
 export default {
   filters: {
@@ -93,7 +89,7 @@ export default {
   methods: {
     fetchData(queryParams = {}) {
       this.listLoading = true;
-      getnewList({ ...this.queryParams, ...queryParams }).then((res) => {
+      getProList({ ...this.queryParams, ...queryParams }).then((res) => {
         this.list = res.data.list;
         this.queryParams = {
           page: res.data.page,
@@ -109,7 +105,7 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
       }).then(() => {
-        delNew({ id }).then((res) => {
+        delPro({ id }).then((res) => {
           if (res.code === 200) {
             this.$message({ type: "success", message: res.message });
             this.fetchData();

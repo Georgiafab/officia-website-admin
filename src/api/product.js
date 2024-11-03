@@ -51,14 +51,6 @@ export function getBrandList(params) {
     params,
   });
 }
-
-export function getBrandDetail(params) {
-  return request({
-    url: "/sys/api/get_brand_detail",
-    method: "get",
-    params,
-  });
-}
 export function getClassfiyList(params) {
   return request({
     url: "/sys/api/get_classfiy_list",
@@ -67,6 +59,21 @@ export function getClassfiyList(params) {
   });
 }
 
+export function getBrandDetail(params) {
+  return request({
+    url: "/sys/api/get_brand_detail",
+    method: "get",
+    params,
+  });
+}
+
+export function getPuids(params) {
+  return request({
+    url: "/sys/api/get_puids",
+    method: "get",
+    params,
+  });
+}
 export function getProductList(params) {
   return request({
     url: "/sys/api/get_case_list",
@@ -88,5 +95,37 @@ export function getProductDetail(params) {
     url: "/sys/api/get_case_detail",
     method: "get",
     params,
+  });
+}
+
+export function getProList(params) {
+  return request({
+    url: "/sys/api/get_productList",
+    method: "get",
+    params,
+  });
+}
+
+export function getProDetail(params) {
+  return request({
+    url: "/sys/api/get_productdetail",
+    method: "get",
+    params,
+  });
+}
+
+export function delPro(data) {
+  return request({
+    url: "/sys/api/del_product",
+    method: "post",
+    data,
+  });
+}
+
+export function addPro(data) {
+  return request({
+    url: "/sys/api/add_product",
+    method: "post",
+    data,
   });
 }

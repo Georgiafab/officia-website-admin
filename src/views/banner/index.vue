@@ -1,10 +1,8 @@
 <template>
   <div class="app-container">
-    <el-button type="success" @click="$router.push('/classfiy/edit')"
+    <el-button type="success" @click="$router.push('/banner/edit')"
       >新增</el-button
     >
-    <el-divider />
-    <SearchHeader :config="config" @onSubmit="onSearch" />
     <el-divider />
     <el-table
       v-loading="listLoading"
@@ -14,21 +12,12 @@
       fit
       highlight-current-row
     >
-      <!-- <el-table-column align="center" label="类别ID" prop="_id">
-      </el-table-column> -->
-
-      <!-- <el-table-column align="center" label="排序" width="270" prop="sort_num">
-      </el-table-column> -->
-      <el-table-column label="_id" width="100" align="center" prop="_id" />
-      <el-table-column label="分类" align="center" prop="brand_id">
+      <el-table-column label="文件" align="center" prop="image_src">
+        <!-- <el-table-column label="视频" align="center" prop="video"> -->
         <template slot-scope="scope">
-          {{ scope.row.brand_id ? scope.row.brand_id.name : "--" }}
+          <el-image :src="scope.row.image_src" alt="" style="width: 40px" />
         </template>
       </el-table-column>
-
-      <el-table-column label="产品类别" align="center" prop="name" />
-      <el-table-column label="权重" align="center" prop="sort" />
-
       <el-table-column label="创建时间" align="center" prop="createAt">
         <template slot-scope="scope">
           {{ new Date(scope.row.createAt).toLocaleString() }}
@@ -40,22 +29,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="创建人" align="center" prop="createdBy">
-        <template slot-scope="scope">
-          {{ scope.row.createdBy ? scope.row.createdBy.username : "--" }}
-        </template>
-      </el-table-column>
-      <el-table-column label="更新人" align="center" prop="updatedBy">
-        <template slot-scope="scope">
-          {{ scope.row.updatedBy ? scope.row.updatedBy.username : "--" }}
-        </template>
-      </el-table-column>
-
       <el-table-column label="操作" width="180" align="center">
         <template slot-scope="scope">
           <el-button
             size="small"
-            @click="$router.push(`/classfiy/edit?id=${scope.row._id}`)"
+            @click="$router.push(`/banner/edit?id=${scope.row._id}`)"
             >编辑</el-button
           >
           <el-button type="danger" size="small" @click="delItem(scope.row._id)"
@@ -75,7 +53,7 @@
 </template>
 
 <script>
-import { getClassfiyList, delClassfiy, getBrandList } from "@/api/product";
+import { delBanner, getBanners } from "@/api/user";
 
 export default {
   filters: {
@@ -94,36 +72,21 @@ export default {
       listLoading: true,
       dialogVisible: false,
       queryParams: {},
-      brand_list: [],
-      classfiy_list: [],
-      config: [
-        { type: "select", label: "分类", key: "brand_id", options: {} },
-        { type: "input", label: "类别名称", key: "name" },
-      ],
     };
   },
   created() {
     this.fetchData();
-    getBrandList().then((res) => {
-      const list = {};
-      res.data.list.forEach((el) => {
-        list[el._id] = el.name;
-      });
-      this.$set(this.config[0], "options", list);
-    });
   },
   methods: {
-    fetchData(queryParams = {}) {
+    fetchData() {
       this.listLoading = true;
-      console.log(queryParams.brand_id);
-      getClassfiyList({ ...this.queryParams, ...queryParams }).then((res) => {
+      getBanners(this.queryParams).then((res) => {
         this.list = res.data.list;
-        this.listLoading = false;
         this.queryParams = {
           page: res.data.page,
           total: res.data.total,
-          ...queryParams,
         };
+        this.listLoading = false;
       });
     },
     delItem(id) {
@@ -132,7 +95,7 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
       }).then(() => {
-        delClassfiy({ id }).then((res) => {
+        delBanner({ id }).then((res) => {
           if (res.code === 200) {
             this.$message({ type: "success", message: res.message });
             this.fetchData();
@@ -141,9 +104,6 @@ export default {
       });
     },
     submitAdd() {},
-    onSearch(form) {
-      this.fetchData(form);
-    },
     pageChange() {
       this.fetchData();
     },
