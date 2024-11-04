@@ -21,6 +21,13 @@ service.interceptors.request.use(
       // please modify it according to the actual situation
       config.headers["authorization"] = `Bearer ${getToken()}`;
     }
+    // Add uuid parameter to all GET requests
+    if (config.method === "get") {
+      config.params = {
+        ...config.params,
+        uuid: new Date().getTime(),
+      };
+    }
     return config;
   },
   (error) => {
