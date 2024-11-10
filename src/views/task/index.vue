@@ -16,8 +16,16 @@
     >
       <el-table-column align="center" label="ID" prop="_id" />
       <el-table-column align="center" label="用户设备号" prop="device" />
-      <el-table-column align="center" label="使用模型" prop="classfiy_id" />
-      <el-table-column align="center" label="场景类型" prop="case_id" />
+      <el-table-column align="center" label="使用模型" prop="classfiy_id">
+        <template slot-scope="scope">
+          {{ scope.row.classfiy_id && scope.row.classfiy_id.name }}
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="场景类型" prop="case_id">
+        <template slot-scope="scope">
+          {{ scope.row.classfiy_id && scope.row.case_id.name }}
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="任务情况" prop="task_situation" />
       <el-table-column label="原图" align="center" prop="original_img">
         <!-- <el-table-column label="视频" align="center" prop="video"> -->
@@ -34,7 +42,7 @@
       <el-table-column label="状态" align="center" prop="status">
         <!-- <el-table-column label="视频" align="center" prop="video"> -->
         <template slot-scope="scope">
-          {{ statusFilter(scope.row.status) }}
+          {{ statusMap[Number(scope.row.status)] }}
         </template>
       </el-table-column>
 
@@ -46,11 +54,6 @@
 
       <el-table-column label="操作" width="180" align="center">
         <template slot-scope="scope">
-          <el-button
-            size="small"
-            @click="$router.push(`/banner/edit?id=${scope.row._id}`)"
-            >编辑</el-button
-          >
           <el-button type="danger" size="small" @click="delItem(scope.row._id)"
             >删除</el-button
           >
@@ -70,16 +73,10 @@
 <script>
 import { delTasks, getTasks } from "@/api/user";
 import { getClassfiyList, getBrandList, getProductList } from "@/api/product";
-const statusMap = ["生成失败", "生成成功", "生成中"];
 export default {
-  filters: {
-    statusFilter(status) {
-      // const statusMap = ["生成失败", "生成成功", "生成中"];
-      return statusMap[status];
-    },
-  },
   data() {
     return {
+      statusMap: ["生成失败", "生成成功", "生成中"],
       list: null,
       listLoading: true,
       dialogVisible: false,

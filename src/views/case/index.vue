@@ -14,6 +14,7 @@
       fit
       highlight-current-row
     >
+      <el-table-column label="_id" align="center" prop="_id" />
       <el-table-column label="分类" align="center" prop="brand_id">
         <template slot-scope="scope">
           {{ scope.row.brand_id && scope.row.brand_id.name }}
@@ -33,11 +34,25 @@
           <el-image :src="scope.row.image" alt="" style="width: 40px" />
         </template>
       </el-table-column>
-
-      <el-table-column label="puid" align="center" prop="puids">
+      <el-table-column label="视频" align="center" prop="video">
         <!-- <el-table-column label="视频" align="center" prop="video"> -->
         <template slot-scope="scope">
-          {{ scope.row.puids || "--" }}
+          <video :src="scope.row.video" alt="" style="width: 40px" />
+        </template>
+      </el-table-column>
+
+      <el-table-column label="puid" align="center" prop="puids" type="expand">
+        <!-- <el-table-column label="视频" align="center" prop="video"> -->
+        <template slot-scope="scope">
+          <div style="display: flex; flex-wrap: wrap; gap: 10px">
+            <p
+              v-for="item in scope.row.puids"
+              :key="item._id"
+              style="width: calc(10% - 10px); padding: 5px; text-align: center"
+            >
+              {{ item.puid }}: {{ item.requestCount }}
+            </p>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createAt">
@@ -113,7 +128,7 @@ export default {
         },
         { type: "select", label: "类别", key: "classfiy_id", options: {} },
         { type: "select", label: "puid", key: "puid", options: {} },
-        { type: "input", label: "案例名称", key: "case_name" },
+        { type: "input", label: "模板类别名称", key: "name" },
       ],
     };
   },
@@ -150,7 +165,7 @@ export default {
       res.data.forEach((el) => {
         list[el._id] = el.puid;
       });
-      this.$set(this.config[0], "options", list);
+      this.$set(this.config[2], "options", list);
     });
   },
   methods: {

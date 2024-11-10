@@ -7,7 +7,12 @@
         class="sidebar-logo-link"
         to="/"
       >
-        <el-image v-if="logo" fit="contain" :src="logo" class="sidebar-logo" />
+        <el-image
+          v-if="logomoble"
+          fit="contain"
+          :src="logomoble"
+          class="sidebar-logo"
+        />
         <h1 v-else class="sidebar-title">{{ title }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
@@ -20,6 +25,7 @@
 
 <script>
 import logo from "@/assets/logo.svg";
+import logomoble from "@/assets/logomoble.png";
 export default {
   name: "SidebarLogo",
   props: {
@@ -32,6 +38,7 @@ export default {
     return {
       // title: "Vue Admin Template",
       logo: logo,
+      logomoble: logomoble,
     };
   },
 };
@@ -61,7 +68,7 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      // width: 32px;
+      width: 90%;
       height: 26px;
       vertical-align: middle;
       // margin-right: 12px;
