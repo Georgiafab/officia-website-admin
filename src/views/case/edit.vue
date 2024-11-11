@@ -31,7 +31,9 @@
           <el-input
             v-model="form.case_image"
             style="margin-right: 30px"
-          /><Selectstatic dirpath="case">历史图片和文件</Selectstatic>
+          /><Selectstatic :dirpath="`case/${this.path}`"
+            >历史图片和文件</Selectstatic
+          >
         </div>
       </el-form-item>
       <el-form-item label="案例名称" prop="case_name" :rules="rules">
@@ -142,7 +144,7 @@ import {
   getClassfiyList,
   getBrandList,
 } from "@/api/product";
-import { upload } from "@/api/user";
+import { upload, addDir } from "@/api/user";
 import Selectstatic from "@/components/Selectstatic";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import "@wangeditor/editor/dist/css/style.css";
@@ -151,6 +153,7 @@ export default {
   components: { Selectstatic, Editor, Toolbar },
   data() {
     return {
+      path: new Date().getTime(),
       form: {
         brand_id: "",
         classfiy_id: "",
@@ -158,6 +161,7 @@ export default {
         product_image: "",
         detail_pdf: [{ value: "", uid: 0 }],
         // sort_num: 0,
+        sort: 0,
       },
       options: [],
       classfiyOptions: {},
@@ -187,10 +191,15 @@ export default {
   mounted() {
     const id = this.$route.query.id;
     this.brandChange();
-    id &&
+
+    if (id) {
       getProductDetail({ id }).then((res) => {
         this.form = res.data;
+        this.path = res.data.path || "";
       });
+    } else {
+      this.onInitFold();
+    }
 
     getBrandList().then((res) => {
       if (res.code === 200) {
@@ -203,18 +212,24 @@ export default {
     onCreated(editor) {
       this.editor = Object.seal(editor); // 一定要用 Object.seal() ，否则会报错
     },
+    onInitFold() {
+      addDir({
+        dirpath: "case",
+        dirname: this.path,
+      });
+    },
     onSubmit() {
       this.$refs.form.validate((valid) => {
         this.loading = true;
         if (valid) {
-          addProduct(this.form)
+          addProduct({ ...this.form, path: this.path })
             .then((res) => {
               if (res.code === 200) {
                 this.$message({ type: "success", message: "提交成功" });
                 // this.$router.replace('/news')
                 if (!this.$route.query.id) {
                   this.form = {
-                    bbrand_id: "",
+                    brand_id: "",
                     classfiy_id: "",
                     product_name: "",
                     product_image: "",
@@ -238,6 +253,7 @@ export default {
     uploadImg(file, insertFn) {
       const imgData = new FormData();
       imgData.append("img", file);
+      imgData.append("dirpath", `case/${this.path}`);
       // console.log(file, imgData)
       upload(imgData).then((res) => {
         const { url, alt, href } = res.data;
