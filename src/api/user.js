@@ -220,6 +220,13 @@ export function delTasks(data) {
     data,
   });
 }
+export function updateTask(params) {
+  return request({
+    url: "/sys/api/video/pix/feed",
+    method: "get",
+    params,
+  });
+}
 
 export function delFilePro(data) {
   return request({

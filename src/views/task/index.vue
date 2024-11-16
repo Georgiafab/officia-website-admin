@@ -1,62 +1,194 @@
 <template>
   <div class="app-container">
-    <el-button type="success" @click="$router.push('/banner/edit')"
-      >新增</el-button
-    >
+    <el-button
+      type="success"
+      @click="$router.push('/banner/edit')"
+    >新增</el-button>
     <el-divider />
-    <SearchHeader ref="searchRef" :config="config" @onSubmit="onSearch" />
+    <SearchHeader
+      ref="searchRef"
+      :config="config"
+      @onSubmit="onSearch"
+    />
     <el-divider />
     <el-table
       v-loading="listLoading"
       :data="list"
+      style="width: 100%"
       element-loading-text="Loading"
       border
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="ID" prop="_id" />
-      <el-table-column align="center" label="用户设备号" prop="device" />
-      <el-table-column align="center" label="使用模型" prop="classfiy_id">
+      <el-table-column
+        align="center"
+        label="task_id"
+        prop="task_id"
+      />
+      <!-- <el-table-column align="center" label="用户设备号" prop="device" /> -->
+      <el-table-column
+        align="center"
+        label="prompt"
+        prop="prompt"
+        width="200"
+      />
+      <!-- <el-table-column align="center" label="使用模型" prop="classfiy_id">
         <template slot-scope="scope">
           {{ scope.row.classfiy_id && scope.row.classfiy_id.name }}
         </template>
-      </el-table-column>
-      <el-table-column align="center" label="场景类型" prop="case_id">
+      </el-table-column> -->
+      <el-table-column
+        align="center"
+        label="场景类型"
+        prop="case_id"
+      >
         <template slot-scope="scope">
-          {{ scope.row.classfiy_id && scope.row.case_id.name }}
+          {{ scope.row.case_id && scope.row.case_id.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="任务情况" prop="task_situation" />
-      <el-table-column label="原图" align="center" prop="original_img">
+      <el-table-column
+        align="center"
+        label="puid"
+        prop="puid"
+      >
+        <template slot-scope="scope">
+          {{ scope.row.puid && scope.row.puid.puid }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="任务情况"
+        prop="state"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.type === 1">successed</span>
+          <span v-else>{{ scope.row.state }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        align="center"
+        label="生成类型"
+        prop="type"
+      >
+        <template slot-scope="scope">
+          <span v-if="scope.row.type === 1">文生图</span>
+          <span v-else>图生视频</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        align="center"
+        label="封面图"
+        prop="poster"
+      >
+        <template slot-scope="scope">
+          <el-image
+            v-if="scope.row.type === 2"
+            :src="scope.row.poster"
+            alt=""
+            style="width: 100px"
+            :preview-src-list="[scope.row.poster]"
+          />
+
+          <span v-else>--</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="图片"
+        align="center"
+        prop="image_url"
+      >
+        <template slot-scope="scope">
+          <el-image
+            v-if="scope.row.type === 1"
+            :src="JSON.parse(scope.row.image_url)[0].url"
+            alt=""
+            style="width: 100px"
+            :preview-src-list="JSON.parse(scope.row.image_url).map(item =>item.url)"
+          />
+          <el-image
+            v-else
+            :src="scope.row.image_url"
+            :preview-src-list="[scope.row.image_url]"
+            alt=""
+            style="width: 100px"
+          />
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="结果视频"
+        prop="video_url"
+        width="180"
+      >
+        <template slot-scope="scope">
+          <video
+            v-if="scope.row.type === 2"
+            controls
+            :src="scope.row.video_url"
+            alt=""
+            style="width: 150px"
+          />
+          <span v-else>--</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        align="center"
+        label="失败原因"
+        prop="refund"
+      />
+      <el-table-column
+        label="状态"
+        align="center"
+        prop="status"
+      >
         <!-- <el-table-column label="视频" align="center" prop="video"> -->
-        <template slot-scope="scope">
-          <el-image :src="scope.row.original_img" alt="" style="width: 100px" />
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="结果视频" prop="result_video">
-        <template slot-scope="scope">
-          <video :src="scope.row.result_video" alt="" style="width: 100px" />
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="失败原因" prop="fail_reason" />
-      <el-table-column label="状态" align="center" prop="status">
-        <!-- <el-table-column label="视频" align="center" prop="video"> -->
-        <template slot-scope="scope">
+        <!-- <template slot-scope="scope">
           {{ statusMap[Number(scope.row.status)] }}
+        </template> -->
+      </el-table-column>
+
+      <el-table-column
+        label="更新时间"
+        align="center"
+        prop="updateAt"
+      >
+        <template slot-scope="scope">
+          {{ new Date(scope.row.updateAt).toLocaleString() }}
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="参数和查询数据"
+        align="center"
+        prop="params"
+        type="expand"
+        width="100"
+      >
+        <template slot-scope="scope">
+          <p>参数 : <pre>{{ JSON.stringify(JSON.parse(scope.row.params), null, 2) }}</pre></p>
+          <p>查询数据 : <pre>{{ JSON.stringify(JSON.parse(scope.row.task_data), null, 2) }}</pre></p>
         </template>
       </el-table-column>
 
-      <el-table-column label="创建时间" align="center" prop="createAt">
+      <el-table-column
+        label="操作"
+        width="200"
+        align="center"
+      >
         <template slot-scope="scope">
-          {{ new Date(scope.row.createAt).toLocaleString() }}
-        </template>
-      </el-table-column>
+          <el-button
+            type="danger"
+            size="small"
+            @click="delItem(scope.row._id)"
+          >删除</el-button>
 
-      <el-table-column label="操作" width="180" align="center">
-        <template slot-scope="scope">
-          <el-button type="danger" size="small" @click="delItem(scope.row._id)"
-            >删除</el-button
-          >
+          <el-button
+            v-if="scope.row.type===2 &&scope.row.status!= 3"
+            type="default"
+            size="small"
+            @click="update(scope.row.task_id)"
+          >更新</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -71,8 +203,9 @@
 </template>
 
 <script>
-import { delTasks, getTasks } from "@/api/user";
+import { delTasks, getTasks, updateTask } from "@/api/user";
 import { getClassfiyList, getBrandList, getProductList } from "@/api/product";
+import { Message } from "element-ui";
 export default {
   data() {
     return {
@@ -90,9 +223,11 @@ export default {
           key: "brand_id",
           options: {},
         },
-        { type: "select", label: "模板", key: "classfiy_id", options: {} },
-        { type: "select", label: "类别", key: "case_id", options: {} },
+        { type: "select", label: "模板", key: "classfiy_id", options: {}},
+        { type: "select", label: "类别", key: "case_id", options: {}},
         { type: "input", label: "搜索内容", key: "keyward" },
+        { type: "input", label: "puid", key: "puid" },
+        { type: "input", label: "task_id", key: "task_id" },
       ],
     };
   },
@@ -128,6 +263,12 @@ export default {
         };
         this.listLoading = false;
       });
+    },
+    update(task_id) {
+      updateTask({ task_id: task_id }).then(res => {
+        Message.success('成功!')
+        this.fetchData();
+      })
     },
     onSearch(form) {
       this.fetchData(form);
