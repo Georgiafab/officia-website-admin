@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="success" @click="$router.push('/brand/edit')"
+    <el-button type="success" @click="$router.push('/fields/edit')"
       >新增</el-button
     >
     <el-divider />
@@ -12,26 +12,21 @@
       fit
       highlight-current-row
     >
-      <!-- <el-table-column
-        label="url 标题"
-        width="100"
-        prop="enTitle"
-        align="center"
-      >
+      <el-table-column label="字段名称" align="center" prop="name">
       </el-table-column>
-
-      <el-table-column align="center" label="排序" width="270" prop="sort_num">
-      </el-table-column> -->
-
-      <el-table-column label="_id" align="center" prop="_id" />
-      <!-- <el-table-column label="id" align="center" prop="id" /> -->
-      <el-table-column label="分类名" align="center" prop="name" />
+      <el-table-column label="字段类型" align="center" prop="type">
+      </el-table-column>
+      <el-table-column label="更新时间" align="center" prop="updateAt">
+        <template slot-scope="scope">
+          {{ new Date(scope.row.updateAt).toLocaleString() }}
+        </template>
+      </el-table-column>
 
       <el-table-column label="操作" width="180" align="center">
         <template slot-scope="scope">
           <el-button
             size="small"
-            @click="$router.push(`/brand/edit?id=${scope.row._id}`)"
+            @click="$router.push(`/fields/edit?id=${scope.row._id}`)"
             >编辑</el-button
           >
           <el-button type="danger" size="small" @click="delItem(scope.row._id)"
@@ -51,7 +46,7 @@
 </template>
 
 <script>
-import { delBrand, getBrandList } from "@/api/product";
+import { delField, listFields } from "@/api/user";
 
 export default {
   filters: {
@@ -78,7 +73,7 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true;
-      getBrandList(this.queryParams).then((res) => {
+      listFields(this.queryParams).then((res) => {
         this.list = res.data.list;
         this.queryParams = {
           page: res.data.page,
@@ -93,7 +88,7 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
       }).then(() => {
-        delBrand({ id }).then((res) => {
+        delField({ id }).then((res) => {
           if (res.code === 200) {
             this.$message({ type: "success", message: res.message });
             this.fetchData();

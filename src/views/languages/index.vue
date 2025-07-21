@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="success" @click="$router.push('/brand/edit')"
+    <el-button type="success" @click="$router.push('/languages/edit')"
       >新增</el-button
     >
     <el-divider />
@@ -12,29 +12,24 @@
       fit
       highlight-current-row
     >
-      <!-- <el-table-column
-        label="url 标题"
-        width="100"
-        prop="enTitle"
-        align="center"
-      >
+      <el-table-column label="Key" align="center" prop="key">
       </el-table-column>
-
-      <el-table-column align="center" label="排序" width="270" prop="sort_num">
-      </el-table-column> -->
-
-      <el-table-column label="_id" align="center" prop="_id" />
-      <!-- <el-table-column label="id" align="center" prop="id" /> -->
-      <el-table-column label="分类名" align="center" prop="name" />
+      <el-table-column label="名称" align="center" prop="value">
+      </el-table-column>
+      <el-table-column label="更新时间" align="center" prop="updateAt">
+        <template slot-scope="scope">
+          {{ new Date(scope.row.updateAt).toLocaleString() }}
+        </template>
+      </el-table-column>
 
       <el-table-column label="操作" width="180" align="center">
         <template slot-scope="scope">
           <el-button
             size="small"
-            @click="$router.push(`/brand/edit?id=${scope.row._id}`)"
+            @click="$router.push(`/languages/edit?key=${scope.row.key}`)"
             >编辑</el-button
           >
-          <el-button type="danger" size="small" @click="delItem(scope.row._id)"
+          <el-button type="danger" size="small" @click="delItem(scope.row.key)"
             >删除</el-button
           >
         </template>
@@ -51,7 +46,7 @@
 </template>
 
 <script>
-import { delBrand, getBrandList } from "@/api/product";
+import { delLanguages, getLanguages } from "@/api/user";
 
 export default {
   filters: {
@@ -78,7 +73,7 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true;
-      getBrandList(this.queryParams).then((res) => {
+      getLanguages(this.queryParams).then((res) => {
         this.list = res.data.list;
         this.queryParams = {
           page: res.data.page,
@@ -87,13 +82,13 @@ export default {
         this.listLoading = false;
       });
     },
-    delItem(id) {
+    delItem(key) {
       this.$confirm("确定要删除当前的数据吗", "确认信息", {
         distinguishCancelAndClose: true,
         confirmButtonText: "确定",
         cancelButtonText: "取消",
       }).then(() => {
-        delBrand({ id }).then((res) => {
+        delLanguages({ key }).then((res) => {
           if (res.code === 200) {
             this.$message({ type: "success", message: res.message });
             this.fetchData();

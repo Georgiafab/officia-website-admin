@@ -204,6 +204,69 @@ export function addBanner(data) {
     data,
   });
 }
+export function delLanguages(data) {
+  return request({
+    url: "/sys/api/del_language",
+    method: "post",
+    data,
+  });
+}
+
+export function getLanguages(params) {
+  return request({
+    url: "/sys/api/languages",
+    method: "get",
+    params,
+  });
+}
+
+export function getLanguagesDetail(params) {
+  return request({
+    url: "/sys/api/language_detail",
+    method: "get",
+    params,
+  });
+}
+
+export function addLanguages(data) {
+  return request({
+    url: "/sys/api/add_language",
+    method: "post",
+    data,
+  });
+}
+
+export function listFields(params) {
+  return request({
+    url: "/sys/api/get_fields",
+    method: "get",
+    params,
+  });
+}
+
+export function addField(data) {
+  return request({
+    url: "/sys/api/add_field",
+    method: "post",
+    data,
+  });
+}
+
+export function deleteField(data) {
+  return request({
+    url: "/sys/api/del_field",
+    method: "post",
+    data,
+  });
+}
+
+export function getFieldDetail(params) {
+  return request({
+    url: "/sys/api/field_detail",
+    method: "get",
+    params,
+  });
+}
 
 export function getTasks(params) {
   return request({

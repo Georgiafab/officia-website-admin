@@ -16,7 +16,7 @@
     >
       预览视频
     </el-button>
-    <Selectstatic :dirpath="dirpath">历史图片和文件</Selectstatic>
+    <Selectstatic :dirpath="dirpath" :change="valueChange">历史图片和文件</Selectstatic>
     <Videoshow :url="videoUrl" :show.sync="show" />
   </div>
 </template>
@@ -32,6 +32,10 @@ export default {
       default: "",
     },
     dirpath: {
+      type: String,
+      default: "",
+    },
+    fieldId: {
       type: String,
       default: "",
     },
@@ -54,8 +58,13 @@ export default {
       this.$emit("input", newVal);
     },
   },
+
   methods: {
-    valueChange() {
+    valueChange(url) {
+      console.log(url, "url");
+      if (typeof url === "string") {
+        this.inputValue = url;
+      }
       this.isImage = /.png|.jpg|.svg|.jpeg|.gif|.webp/g.test(this.inputValue);
       this.isVideo = /.mp4|.avi|.mov|.wmv|.flv|.mkv|.webm/g.test(
         this.inputValue
@@ -65,6 +74,7 @@ export default {
       this.videoUrl = this.inputValue;
       this.show = true;
     },
+
   },
 };
 </script>

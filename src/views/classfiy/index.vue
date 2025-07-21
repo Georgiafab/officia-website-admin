@@ -28,7 +28,11 @@
 
       <el-table-column label="产品类别" align="center" prop="name" />
       <el-table-column label="权重" align="center" prop="sort" />
-
+      <el-table-column label="是否开启" align="center" prop="open">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.open" @change="handleChange(scope.row)" />
+        </template>
+      </el-table-column>
       <el-table-column label="创建时间" align="center" prop="createAt">
         <template slot-scope="scope">
           {{ new Date(scope.row.createAt).toLocaleString() }}
@@ -75,7 +79,7 @@
 </template>
 
 <script>
-import { getClassfiyList, delClassfiy, getBrandList } from "@/api/product";
+import { getClassfiyList, delClassfiy, getBrandList, addClassfiy } from "@/api/product";
 
 export default {
   filters: {
@@ -97,7 +101,7 @@ export default {
       brand_list: [],
       classfiy_list: [],
       config: [
-        { type: "select", label: "分类", key: "brand_id", options: {} },
+        { type: "select", label: "分类", key: "brand_id", options: {}},
         { type: "input", label: "类别名称", key: "name" },
       ],
     };
@@ -146,6 +150,14 @@ export default {
     },
     pageChange() {
       this.fetchData();
+    },
+    handleChange(item) {
+      addClassfiy({ _id: item._id, open: item.open }).then((res) => {
+        if (res.code === 200) {
+          this.$message({ type: "success", message: "修改成功" });
+          this.fetchData();
+        }
+      });
     },
   },
 };

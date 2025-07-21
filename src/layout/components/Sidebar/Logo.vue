@@ -7,17 +7,17 @@
         class="sidebar-logo-link"
         to="/"
       >
-        <el-image
+        <!-- <el-image
           v-if="logomoble"
           fit="contain"
           :src="logomoble"
           class="sidebar-logo"
-        />
-        <h1 v-else class="sidebar-title">{{ title }}</h1>
+        /> -->
+        <h1 class="sidebar-title">VixAI</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <el-image v-if="logo" fit="contain" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title">{{ title }}</h1>
+        <!-- <el-image v-if="logo" fit="contain" :src="logo" class="sidebar-logo" /> -->
+        <h1 class="sidebar-title">VixAI</h1>
       </router-link>
     </transition>
   </div>
@@ -59,7 +59,7 @@ export default {
   width: 100%;
   height: 70px;
   line-height: 70px;
-  background: #2b2f3a;
+  background: #223769;
   text-align: center;
   overflow: hidden;
 
@@ -75,14 +75,11 @@ export default {
     }
 
     & .sidebar-title {
-      display: inline-block;
-      margin: 0;
+      font-size: 35px;
+      line-height: 1;
+      font-weight: 700;
+      font-family: "Roboto", sans-serif;
       color: #fff;
-      font-weight: 600;
-      line-height: 50px;
-      font-size: 14px;
-      font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
-      vertical-align: middle;
     }
   }
 

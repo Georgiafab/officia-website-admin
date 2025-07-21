@@ -50,20 +50,21 @@
       <el-checkbox-group v-model="checkedCities">
         <li
           v-for="item in fileList"
-          :key="item.title + item.hash"
+          :key="item.name + item.hash"
           :class="item.type"
-          @dblclick="dirClick(item.type, item.title)"
+          @click="handleClick(item)"
+          @dblclick="dirClick(item.type, item.name)"
         >
           <div class="right">
-            <el-checkbox :label="item.path" />
+            <!-- <el-checkbox :label="item.path" /> -->
             <div class="type">
               <el-image
                 v-if="item.type === 'img'"
                 style="width: 50px; height: 50px"
-                :src="`${path}${item.path}?v=${item.hash}`"
+                :src="`${item.url}?v=${item.hash}`"
                 fit="cover"
                 lazy
-                :preview-src-list="[`${path}${item.path}?v=${item.hash}`]"
+                :preview-src-list="[`${item.url}?v=${item.hash}`]"
               />
               <!-- <img :src="" alt="" > -->
               <i v-else-if="item.type == 'dir'" class="el-icon-folder-opened" />
@@ -72,19 +73,19 @@
                 v-else-if="item.type == 'pdf'"
                 class="el-icon-collection"
                 @click="
-                  reviewVideo(`${path}${item.path}?v=${item.hash}`, 'pdf')
+                  reviewVideo(`${item.url}?v=${item.hash}`, 'pdf')
                 "
               />
               <i
                 v-else-if="item.type == 'video'"
                 class="el-icon-video-camera"
                 @click="
-                  reviewVideo(`${path}${item.path}?v=${item.hash}`, 'video')
+                  reviewVideo(`${item.url}?v=${item.hash}`, 'video')
                 "
               />
             </div>
 
-            {{ item.title }}
+            {{ item.name }}
             <span
               v-if="item.type != 'dir'"
               style="font-size: 14px; color: #409eff; padding-left: 20px"
@@ -92,43 +93,19 @@
               ({{ item.size }})</span
             >
           </div>
-          <div class="center">{{ item.update_time }}</div>
+          <div class="center">{{ new Date(item.update_time).toLocaleString() }}</div>
           <div class="left">
             <el-button
               v-if="item.type !== 'dir'"
-              v-clipboard="`${path}${item.path}?v=${item.hash}`"
+              v-clipboard="`${item.url}?v=${item.hash}`"
               v-clipboard:success="clipboardSuccessHandler"
               type="success"
               size="small"
-              >复制</el-button
+              >复制路径</el-button
             >
             <el-button type="danger" size="small" @click="delItem(item)"
               >删除</el-button
             >
-            <div v-if="item.type !== 'dir'" class="repalce">
-              <el-upload
-                :ref="`upload`"
-                action="#"
-                :http-request="beforeUpload"
-                :data="{ ...item, utype: 'replace' }"
-              >
-                <el-button type="warning" size="small">替换</el-button>
-              </el-upload>
-              <!-- class="repalce-inpt" -->
-              <!-- <input
-                type="file"
-                name="file"
-                @change="replaceItem(item, $event)"
-                :id="`replaceInp${index}`"
-                class="repalce-inpt"
-              />
-              <el-button
-                @click="beforeReplace(item, index)"
-                type="warning"
-                size="small"
-                >替换</el-button
-              > -->
-            </div>
           </div>
         </li>
       </el-checkbox-group>
@@ -176,6 +153,10 @@ export default {
       default: "/",
     },
     select: Boolean,
+    change: {
+      type: Function,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -200,7 +181,7 @@ export default {
     fileList() {
       if (this.search) {
         return this.allFileList.filter((item) =>
-          item.title.includes(this.search)
+          item.name.includes(this.search)
         );
       }
       return this.allFileList;
@@ -223,6 +204,16 @@ export default {
     }, "");
   },
   methods: {
+    handleClick(item) {
+      if (item.type === "dir") {
+        return;
+      }
+
+      console.log(item.url, "item.url");
+      console.log("change function:", this.change);
+      console.log("select prop:", this.select);
+      this.change(item.url);
+    },
     dirClick(type, title) {
       if (type !== "dir") {
         return;

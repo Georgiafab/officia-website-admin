@@ -1,6 +1,6 @@
 <template>
-  <el-dialog title="预览" :visible.sync="dialogVisible" width="50%">
-    <video v-if="ty == 'video'" :src="url" controls></video>
+  <el-dialog title="预览" :visible.sync="dialogVisible" width="50%" >
+    <video v-if="ty == 'video' && dialogVisible" :src="url" controls style="width: 100%; height: 100%;"></video>
     <embed
       v-else-if="ty == 'pdf'"
       :src="url"

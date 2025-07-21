@@ -26,23 +26,30 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="名称" align="center" prop="name" />
+      <el-table-column label="名称" align="center" prop="name" >
+        <template slot-scope="scope">
+          {{ scope.row.name }}
+        </template>
+      </el-table-column>
       <el-table-column label="排序" align="center" prop="sort" />
+      <el-table-column label="是否开启" align="center" prop="open">
+        <template slot-scope="scope">
+            <el-switch v-model="scope.row.open" @change="handleChange(scope.row)" />
+          </template>
+      </el-table-column>
       <el-table-column label="图片" align="center" prop="image">
         <!-- <el-table-column label="视频" align="center" prop="video"> -->
         <template slot-scope="scope">
-          <el-image :src="scope.row.image" alt="" style="width: 40px" />
+          <el-image :src="scope.row.image" :preview-src-list="[scope.row.image]" alt="" style="width: 40px" />
         </template>
       </el-table-column>
       <el-table-column label="视频" align="center" prop="video">
-        <!-- <el-table-column label="视频" align="center" prop="video"> -->
         <template slot-scope="scope">
-          <video :src="scope.row.video" alt="" style="width: 40px" />
+          <video :src="scope.row.video" @click="reviewVideo(scope.row.video)" alt="" style="width: 40px" />
         </template>
       </el-table-column>
 
-      <el-table-column label="puid" align="center" prop="puids" type="expand">
-        <!-- <el-table-column label="视频" align="center" prop="video"> -->
+      <!-- <el-table-column label="puid" align="center" prop="puids" type="expand">
         <template slot-scope="scope">
           <div style="display: flex; flex-wrap: wrap; gap: 10px">
             <p
@@ -54,7 +61,7 @@
             </p>
           </div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="创建时间" align="center" prop="createAt">
         <template slot-scope="scope">
           {{ new Date(scope.row.createAt).toLocaleString() }}
@@ -98,6 +105,8 @@
       :current-page.sync="queryParams.page"
       @current-change="pageChange"
     />
+
+    <Videoshow :url="videoUrl" :show.sync="show" />
   </div>
 </template>
 
@@ -110,10 +119,13 @@ import {
   addProduct,
   getPuids,
 } from "@/api/product";
-
+import Videoshow from "@/components/Videoshow";
 export default {
+  components: { Videoshow },
   data() {
     return {
+      show: false,
+      videoUrl: "",
       list: null,
       listLoading: true,
       dialogVisible: false,
@@ -127,7 +139,7 @@ export default {
           options: {},
         },
         { type: "select", label: "类别", key: "classfiy_id", options: {} },
-        { type: "select", label: "puid", key: "puid", options: {} },
+        // { type: "select", label: "puid", key: "puid", options: {} },
         { type: "input", label: "模板类别名称", key: "name" },
       ],
     };
@@ -215,11 +227,16 @@ export default {
       this.fetchData();
     },
     handleChange(item) {
-      addProduct({ _id: item._id, isHome: item.isHome }).then((res) => {
+      addProduct({ _id: item._id, open: item.open }).then((res) => {
         if (res.code === 200) {
           this.$message({ type: "success", message: "修改成功" });
+          this.fetchData();
         }
       });
+    },
+    reviewVideo(url) {
+      this.videoUrl = url;
+      this.show = true;
     },
   },
 };

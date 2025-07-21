@@ -59,9 +59,9 @@ export function getClassfiyList(params) {
   });
 }
 
-export function getBrandDetail(params) {
+export function getCaseList(params) {
   return request({
-    url: "/sys/api/get_brand_detail",
+    url: "/sys/api/get_case_list",
     method: "get",
     params,
   });

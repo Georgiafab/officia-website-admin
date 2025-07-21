@@ -15,6 +15,7 @@
         :select="true"
         dirpath="products"
         :currpath="$route.hash"
+        :change="handleChange"
       />
     </el-dialog>
   </div>
@@ -26,6 +27,14 @@ export default {
   components: { dashboard },
   props: {
     dirpath: String,
+    change: {
+      type: Function,
+      default: () => {},
+    },
+    fieldId: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -49,15 +58,23 @@ export default {
       this.dialogVisible = true;
       this.$router.push({
         path: this.$route.path,
-        query: { ...this.$route.query, dirpath: this.dirpath },
+        query: { ...this.$route.query, dirpath: this.dirpath, fieldId: this.fieldId },
       });
     },
     dialogClose() {
       this.dialogVisible = false;
       this.$router.push({
         path: this.$route.path,
-        query: { ...this.$route.query, dirpath: this.dirpath },
+        query: { ...this.$route.query, dirpath: this.dirpath, fieldId: this.fieldId },
       });
+    },
+    handleChange(url) {
+      console.log(url, "url将dashboard的change事件传递给父组件");
+      console.log("this.change function:", this.change);
+      // 将dashboard的change事件传递给父组件
+      this.change(url);
+      // 选择完成后关闭对话框
+      this.dialogVisible = false;
     },
   },
 };

@@ -14,19 +14,25 @@
       </el-form-item>
 
       <el-form-item label="类别名称" prop="name" :rules="rules">
-        <el-input v-model="form.name" />
+        <div v-for="language in languages" :key="language.key" style="display: flex; align-items: center; margin-bottom: 10px;">
+          <span style="margin-right: 10px; width: 100px;">{{ language.value }}  :</span>
+          <el-input v-model="form.name[language.key]" @change="changeName(language.key, $event)" :placeholder="language.value" />
+        </div>
       </el-form-item>
 
-      <el-form-item label="类别副标题" prop="subname" :rules="rules">
+      <!-- <el-form-item label="类别副标题" prop="subname" :rules="rules">
         <el-input v-model="form.subname" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="排序" prop="sort" :rules="rules">
         <el-input-number v-model="form.sort" :min="0" />
       </el-form-item>
-      <el-form-item label="类别图片" prop="image_src" :rules="rules">
+      <!-- <el-form-item label="类别图片" prop="image_src" :rules="rules">
         <UpdateInput v-model="form.image_src" dirpath="template"
           >历史图片和文件</UpdateInput
         >
+      </el-form-item> -->
+      <el-form-item label="是否开启" prop="open">
+        <el-switch v-model="form.open" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" :loading="loading" @click="onSubmit"
@@ -39,15 +45,17 @@
 </template>
 
 <script>
+import { getLanguages } from "@/api/user";
 import { getBrandList, addClassfiy, getClassfiyDetail } from "@/api/product";
-import UpdateInput from "@/components/UpdateInput";
+// import UpdateInput from "@/components/UpdateInput";
 export default {
-  components: { UpdateInput },
+  // components: { UpdateInput },
   data() {
     return {
       form: {
         brand_id: "",
-        classfiy_name: "",
+        name: {},
+        open: true,
         // sort_num: 0,
       },
       options: [],
@@ -57,19 +65,32 @@ export default {
   },
   mounted() {
     const id = this.$route.query.id;
-    id &&
-      getClassfiyDetail({ id }).then((res) => {
-        console.log(res, "res");
-        this.form = res.data;
-      });
-
     getBrandList().then((res) => {
       if (res.code === 200) {
         this.options = res.data.list;
       }
     });
+    getLanguages({ size: 1000 }).then((res) => {
+      if (res.code === 200) {
+        this.languages = res.data.list;
+        this.languages.forEach(item => {
+          this.$set(this.form.name, item.key, this.form.name[item.key] || ""); // 使用 $set 确保响应式
+        });
+
+        id &&
+      getClassfiyDetail({ id }).then((res) => {
+        console.log(res, "res");
+        this.form = res.data;
+        this.$set(this.form, 'name', res.data.name);
+      });
+      }
+    });
   },
   methods: {
+    changeName(key, value) {
+      this.$set(this.form.name, key, value);
+      console.log(this.form.name[key], "this.form.name");
+    },
     onSubmit() {
       this.$refs.form.validate((valid) => {
         this.loading = true;
@@ -85,6 +106,7 @@ export default {
                   this.form = {
                     brand_id: "",
                     classfiy_name: "",
+                    open: true,
                   };
                 }
               }
