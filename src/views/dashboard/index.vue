@@ -110,6 +110,17 @@
         </li>
       </el-checkbox-group>
     </ul>
+
+    <el-pagination
+      background
+      style="margin-top: 20px; text-align: center"
+      :hide-on-single-page="true"
+      layout="prev, pager, next"
+      :total="allFileList.length"
+      :page-size="10"
+      :current-page="page"
+      @current-change="handleCurrentChange"
+    />
     <Videoshow :url="videoUrl" :show.sync="show" :ty="ty" />
 
     <el-dialog title="请选择图片压缩等级" :visible.sync="dialogVisible">
@@ -174,6 +185,7 @@ export default {
       currFile: null,
       type: "new",
       isCompress: true,
+      page: 1,
       imageType: "png" | "jpg" | "jpeg" | "gif" | "bmp" | "raw",
     };
   },
@@ -182,9 +194,9 @@ export default {
       if (this.search) {
         return this.allFileList.filter((item) =>
           item.name.includes(this.search)
-        );
+        ).slice((this.page - 1) * 10, this.page * 10);
       }
-      return this.allFileList;
+      return this.allFileList.slice((this.page - 1) * 10, this.page * 10);
     },
   },
 
@@ -204,6 +216,9 @@ export default {
     }, "");
   },
   methods: {
+    handleCurrentChange(page) {
+      this.page = page;
+    },
     handleClick(item) {
       if (item.type === "dir") {
         return;

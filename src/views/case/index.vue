@@ -22,7 +22,7 @@
       </el-table-column>
       <el-table-column label="类别" align="center" prop="classfiy_id">
         <template slot-scope="scope">
-          {{ scope.row.classfiy_id && scope.row.classfiy_id.name }}
+          {{ scope.row.classfiy_id && scope.row.classfiy_id.name && scope.row.classfiy_id.name.en }}
         </template>
       </el-table-column>
 

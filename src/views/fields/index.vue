@@ -14,6 +14,7 @@
     >
       <el-table-column label="字段名称" align="center" prop="name">
       </el-table-column>
+      <el-table-column label="字段key" align="center" prop="key"></el-table-column>
       <el-table-column label="字段类型" align="center" prop="type">
       </el-table-column>
       <el-table-column label="更新时间" align="center" prop="updateAt">

@@ -74,6 +74,15 @@ export function getPuids(params) {
     params,
   });
 }
+
+export function getBrandDetail(params) {
+  return request({
+    url: "/sys/api/get_brand_detail",
+    method: "get",
+    params,
+  });
+}
+
 export function getProductList(params) {
   return request({
     url: "/sys/api/get_case_list",

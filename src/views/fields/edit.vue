@@ -4,12 +4,19 @@
       <el-form-item label="字段名称" prop="name" :rules="rules">
         <el-input v-model="form.name" :min="0" />
       </el-form-item>
+      <el-form-item label="字段key" prop="key" :rules="rules">
+        <el-input v-model="form.key"  />
+      </el-form-item>
       <el-form-item label="字段类型" prop="type" :rules="rules">
         <el-select v-model="form.type" placeholder="请选择字段类型">
           <el-option label="文本" value="text" />
           <el-option label="下拉" value="select"/>
         </el-select>
       </el-form-item>
+      <el-form-item label="是否隐藏" prop="isHidden">
+        <el-switch v-model="form.isHidden" />
+      </el-form-item>
+
       <el-form-item label="选项" prop="options" v-if="form.type === 'select'">
         <div v-for="(option, index) in form.options" :key="index" style="display: flex; align-items: center; margin-bottom: 10px;">
           <el-input v-model="option.label" placeholder="请输入选项名称" style="margin-right: 10px;" />
@@ -41,6 +48,7 @@ export default {
         name: "",
         type: "",
         options: [],
+        isHidden: false,
       },
       loading: false,
       rules: { required: true, message: "该字段必填", trigger: "blur" },

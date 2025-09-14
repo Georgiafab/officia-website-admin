@@ -93,8 +93,8 @@ export default {
     },
     onSubmit() {
       this.$refs.form.validate((valid) => {
-        this.loading = true;
         if (valid) {
+          this.loading = true;
           addClassfiy({
             ...this.form,
           })
